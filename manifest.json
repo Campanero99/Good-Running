@@ -1,0 +1,32 @@
+{
+  "name": "Besser Laufen - Professionelles Lauftraining",
+  "short_name": "Besser Laufen",
+  "description": "Herzfrequenzzonen, Trainingstempos und Wochenpläne für 10K bis Marathon",
+  "start_url": "/",
+  "display": "standalone",
+  "background_color": "#EFF6FF",
+  "theme_color": "#4F46E5",
+  "orientation": "portrait",
+  "icons": [
+    {
+      "src": "icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "any"
+    },
+    {
+      "src": "icon.png",
+      "sizes": "180x180",
+      "type": "image/png",
+      "purpose": "maskable"
+    }
+  ]
+}
+```
+
+## 3. Estructura final de tu repositorio:
+```
+tu-repositorio-github/
+├── index.html
+├── manifest.json
+└── icon.png

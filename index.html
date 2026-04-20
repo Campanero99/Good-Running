@@ -312,7 +312,7 @@
 
                 {hfZonen && (
                   <div className="space-y-3">
-                    <h3 className="text-xl font-bold text-gray-800 mb-4">Your Training Zones:</h3>
+                    <h3 className="text-xl font-bold text-gray-800 mb-4">Your training zones:</h3>
  {[
   { label: 'Recovery', percent: '(<68%)', range: `< ${hfZonen.erholung.max} bpm`, colors: 'from-green-50 to-green-100 border-green-300 text-green-800' },
   { label: 'Zone 1', percent: '(68-72%)', range: `${hfZonen.zone1.min}-${hfZonen.zone1.max} bpm`, colors: 'from-blue-50 to-blue-100 border-blue-300 text-blue-800' },
@@ -371,7 +371,7 @@
 
                 <div className="mb-6 bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
                   <p className="text-blue-800">
-                    <strong>Gib deine Bestzeit ein</strong> über 10 km oder Marathon, um deine Zeiten für andere Distanzen vorherzusagen.
+                    <strong>Enter your best time</strong> a 10K or marathon to estimate your times for other distances.
                   </p>
                 </div>
 
@@ -679,7 +679,7 @@
                     },
                     {
                       n: '3', title: 'Planning: Weeks and Structure',
-                      text: '8 bis 11 Wochen spezifisches Training sind eine gute Grundlage für einen Marathon. Der Schlüssel liegt in der Progression: Umfang und Intensity kontrolliert steigern und dabei die Prinzipien von Belastung, Erholung und Anpassung beachten.'
+                      text: ' Eight to 11 weeks of specific training provide a solid foundation for a marathon. The key lies in progression: gradually increasing volume and intensity while adhering to the principles of training, recovery, and adaptation.'
                     },
                     {
                       n: '4', title: 'Training Environment: Place and Community',
@@ -699,15 +699,14 @@
                     },
                     {
                       n: '8', title: 'Intensityskontrolle: Pulsmesser und Körpergefühl',
-                      text: 'Die eigene maximale Heart Rate und aerobe Schwelle zu kennen, ermöglicht präzises Training. Technologie ist hilfreich, aber vergiss nicht, auf deinen Körper zu hören: Müdigkeit, Erholung und Stimmung sind ebenfalls wichtig.'
+                      text: 'Knowing your maximum heart rate and aerobic threshold allows for precise training. Technology is helpful, but don’t forget to listen to your body: fatigue, recovery, and mood are also important.'
                     },
                     {
-                      n: '9', title: 'The Long Run: The Marathon Runner\'s Laboratory',
-                      text: 'The long run is a key pillar of marathon training. Do it on Sunday mornings. Here metabolism, mind, and patience are trained.'
+                      n: '9', title: 'Long runs are a crucial pillar of marathon training. Sunday morning is ideal for completing the long run. These runs accustom the muscles to working for a long time without interruption, teach the metabolism to get by with fewer carbohydrates, and train mental strength.'
                     },
                     {
                       n: '10', title: 'Time or Kilometers?',
-                      text: 'Für die meisten Läufer/innen ist das Training nach Zeit einfacher zu gestalten: 2:15–3:00 Hours kontinuierliches Laufen fördert die gewünschten Anpassungen besser als eine starre Kilometerzahl.'
+                      text: 'While professional runners plan their training in kilometers, this isn’t particularly recommended for popular runners. Professionals can run 20 km in 1 hour and 30–35 km in 2:00–2:15 hours during training, whereas popular runners may take twice as long to cover the same distance. For this reason, it is not advisable for recreational runners to focus on kilometers, but rather on the amount of time they want to spend training. Otherwise, they will not achieve the recovery necessary for the next training days, which is just as important as the effort itself.'
                     },
                     {
                       n: '11', title: 'Metabolic Adaptation: Fasted Training',
@@ -735,7 +734,7 @@
                     },
                     {
                       n: '17', title: 'Method: Effective Simplicity',
-                      text: '2–3-mal pro Woche 70–80 Minutes zu laufen, 20–25 Seconds langsamer als das Marathontempo, baut eine solide Ausdauer auf. Dieses Training ist anspruchsvoll und äußerst wirksam.'
+                      text: ' 'Running 70–80 minutes 2–3 times a week, at a pace 20–25 seconds slower than marathon pace, builds solid endurance. This training is challenging and extremely effective.'
                     },
                     {
                       n: '18', title: 'Shoes: Confidence Under Your Feet',
@@ -743,8 +742,8 @@
                     },
                     {
                       n: '19', title: 'Race Day: Science and Emotion',
-                      text: 'Frühstück: ich habe vor dem Marathon nie Kaffee getrunken um meine Nervosität nicht noch mehr zu steigern. Kamillentee und ein Brötchen mit Butter und Honig sowie eine reife Banane – drei Hours vor dem Start sind eine gute Grundlage. Ein 10-15 minutiges lockeres Einlaufen vor dem Start, bereitet dich auf dem Marathon vor. Und dann, an der Startlinie, wirst du verstehen, dass sich alles gelohnt hat: jeder gelaufener Kilometer, jeder überwundene Zweifel, jedes frühe Aufstehen. Der Marathon wird nicht nur mit den Beinen gelaufen – er wird auch mit dem Kopf gelaufen … und mit dem Herzen.'
-                    },
+                      text: 'Breakfast: I never drank coffee before the marathon so as not to make my nerves even worse. Chamomile tea (to settle my stomach), a roll with butter and honey, and a ripe banana—that was my pre-marathon breakfast, three hours before the start. A 10- to 15-minute easy warm-up before the start is also helpful and prepares your muscles for the exertion. And then, standing at the starting line—now the marathon can begin. I’m well prepared and feel that it was all worth it: every kilometer run, every doubt overcome, every early morning, every effort—none of it was in vain. The marathon isn’t just run with your legs—it’s also run with your mind… and with your heart.”
+.'                    },
                   ].map(p => (
                     <div key={p.n} className="bg-white border-2 border-gray-200 rounded-xl p-4 md:p-6 hovnicht er:shadow-lg transition-shadow">
                       <h3 className="text-base md:text-lg font-bold text-indigo-700 mb-2 md:mb-3 leading-snug">{p.n}. {p.title}</h3>

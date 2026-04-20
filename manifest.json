@@ -1,7 +1,7 @@
 {
-  "name": "Besser Laufen - Professionelles Lauftraining",
-  "short_name": "Besser Laufen",
-  "description": "Herzfrequenzzonen, Trainingstempos und Wochenpläne für 10K bis Marathon",
+  "name": "Good running - Professional running coaching",
+  "short_name": "Good running",
+  "description": "‘Heart rate zones, training paces and weekly plans for 10K to marathon’",
   "start_url": "/",
   "display": "standalone",
   "background_color": "#EFF6FF",

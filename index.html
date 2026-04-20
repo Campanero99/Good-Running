@@ -1,9 +1,9 @@
 <!DOCTYPE html>
-<html lang="de">
+<html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Besser Laufen</title>
+    <title>Run Better</title>
 <link rel="icon" type="image/png" sizes="180x180" href="icon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
 <link rel="manifest" href="manifest.json">
@@ -93,7 +93,7 @@
       </svg>
     );
 
-    const BesserLaufen = () => {
+    const RunBetter = () => {
       const [activeTab, setActiveTab] = React.useState('hf');
       const [hfMax, setHfMax] = React.useState('');
       const [alter, setAlter] = React.useState('');
@@ -117,7 +117,7 @@
         };
       };
 
-      const zeitZuSekunden = (h, min, sek) => (h || 0) * 3600 + (min || 0) * 60 + (sek || 0);
+      const zeitZuSeconds = (h, min, sek) => (h || 0) * 3600 + (min || 0) * 60 + (sek || 0);
 
       const sekundenZuFormat = (totalSek) => {
         const h = Math.floor(totalSek / 3600);
@@ -151,12 +151,12 @@
       const berechneTempos = () => {
         let tempoMarathon, tempo10k;
         if (zeit10k.min) {
-          const sek10k = zeitZuSekunden(0, parseInt(zeit10k.min), parseInt(zeit10k.sek || 0));
+          const sek10k = zeitZuSeconds(0, parseInt(zeit10k.min), parseInt(zeit10k.sek || 0));
           const zeiten = vorhersageZeiten('10k', sek10k);
           tempoMarathon = zeiten['42k'] / 42.195;
           tempo10k = sek10k / 10;
         } else if (zeitMarathon.h || zeitMarathon.min) {
-          const sekMarathon = zeitZuSekunden(parseInt(zeitMarathon.h || 0), parseInt(zeitMarathon.min || 0), 0);
+          const sekMarathon = zeitZuSeconds(parseInt(zeitMarathon.h || 0), parseInt(zeitMarathon.min || 0), 0);
           const zeiten = vorhersageZeiten('42k', sekMarathon);
           tempoMarathon = sekMarathon / 42.195;
           tempo10k = zeiten['10k'] / 10;
@@ -164,7 +164,7 @@
 
         return {
           lockererLauf: { min: tempoMarathon + 60, max: tempoMarathon + 75 },
-          rennTempo: {
+          rennPace: {
             km: zielDistanz === '10k' ? '5–6 km' : '5–15 km',
             tempo: zielDistanz === '10k' ? tempo10k : tempoMarathon
           },
@@ -174,14 +174,14 @@
             distanz: zielDistanz === '10k' ? '8–12 km' : '12–15 km'
           },
           langerLaufBasic: {
-            dauer: '1:45–2:00 Std.',
-            beschreibung: 'Das ganze Jahr über, wenn du kein Marathonläufer bist',
+            dauer: '1:45–2:00 hrs.',
+            beschreibung: 'Year-round, if you are not marathon training',
             tempoMin: tempo10k + 90,
             tempoMax: tempo10k + 105
           },
           langerLaufMarathon: {
-            dauer: '2:15–3:00 Std.',
-            beschreibung: 'Jede Woche um 10–15 Min. steigern',
+            dauer: '2:15–3:00 hrs.',
+            beschreibung: 'Increase 10–15 min each week',
             tempoMin: tempoMarathon + 60,
             tempoMax: tempoMarathon + 75
           }
@@ -193,10 +193,10 @@
 
       const holeVorhersagen = () => {
         if (zeit10k.min) {
-          const sek10k = zeitZuSekunden(0, parseInt(zeit10k.min), parseInt(zeit10k.sek || 0));
+          const sek10k = zeitZuSeconds(0, parseInt(zeit10k.min), parseInt(zeit10k.sek || 0));
           return vorhersageZeiten('10k', sek10k);
         } else if (zeitMarathon.h || zeitMarathon.min) {
-          const sekMarathon = zeitZuSekunden(parseInt(zeitMarathon.h || 0), parseInt(zeitMarathon.min || 0), 0);
+          const sekMarathon = zeitZuSeconds(parseInt(zeitMarathon.h || 0), parseInt(zeitMarathon.min || 0), 0);
           return vorhersageZeiten('42k', sekMarathon);
         }
         return null;
@@ -206,19 +206,19 @@
 
       const getNiveau = () => {
         if (!vorhersagen) return null;
-        const marathonStunden = vorhersagen['42k'] / 3600;
-        if (marathonStunden < 2.433) return 'elite';
-        if (marathonStunden < 3.083) return 'fortgeschritten';
-        if (marathonStunden < 3.667) return 'mittel';
+        const marathonHours = vorhersagen['42k'] / 3600;
+        if (marathonHours < 2.433) return 'elite';
+        if (marathonHours < 3.083) return 'fortgeschritten';
+        if (marathonHours < 3.667) return 'mittel';
         return 'anfänger';
       };
 
       const niveau = getNiveau();
       const empfehlungen = {
-        elite: { kmWoche: '120–160 km', qualitätsTage: '3–4 Tage' },
-        fortgeschritten: { kmWoche: '90–120 km', qualitätsTage: '2–3 Tage' },
-        mittel: { kmWoche: '60–90 km', qualitätsTage: '2 Tage' },
-        anfänger: { kmWoche: '60–80 km', qualitätsTage: '1–2 Tage' }
+        elite: { kmWoche: '120–160 km', qualitätsTage: '3–4 days' },
+        fortgeschritten: { kmWoche: '90–120 km', qualitätsTage: '2–3 days' },
+        mittel: { kmWoche: '60–90 km', qualitätsTage: '2 days' },
+        anfänger: { kmWoche: '60–80 km', qualitätsTage: '1–2 days' }
       };
 
       return (
@@ -227,10 +227,10 @@
             <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
               <div className="flex items-center justify-center gap-3 mb-4">
                 <Activity className="w-12 h-12 text-indigo-600" />
-                <h1 className="text-4xl font-bold text-gray-800">Besser Laufen</h1>
+                <h1 className="text-4xl font-bold text-gray-800">Run Better</h1>
               </div>
               <p className="text-center text-gray-600 text-lg">
-                Professionelles Lauftraining auf der Grundlage von Elite-Erfahrung (Persönliche Bestzeit: 2:19 h Marathon)
+                Professional running training based on elite experience (Personal best: 2:19 h Marathon)
               </p>
               <div style={{display:'flex', justifyContent:'center', margin:'16px 0'}}>
                 <img
@@ -239,7 +239,7 @@
                   width="300"
                   alt="Corredor"
                   onClick={(e) => e.currentTarget.classList.toggle('girando')}
-                  title="Klicken zum Drehen"
+                  title="Click to spin"
                   style={{cursor:'pointer'}}
                 />
               </div>
@@ -248,11 +248,11 @@
             <div className="bg-white rounded-2xl shadow-xl mb-6 p-2">
               <div className="flex gap-2 flex-wrap">
                 {[
-                  { id: 'hf', icon: <Heart className="w-5 h-5 inline mr-2" />, label: 'HF-Zonen' },
-                  { id: 'zeiten', icon: <Trophy className="w-5 h-5 inline mr-2" />, label: 'Prognose' },
-                  { id: 'tempos', icon: <Target className="w-5 h-5 inline mr-2" />, label: 'Tempos' },
-				  { id: 'plan', icon: <Target className="w-5 h-5 inline mr-2" />, label: 'Trainingsplan' },
-                  { id: 'empfehlungen', icon: <TrendingUp className="w-5 h-5 inline mr-2" />, label: 'Empfehlungen' },
+                  // dummy: <Heart className="w-5 h-5 inline mr-2" />, label: 'HR Zones' },
+                  { id: 'zeiten', icon: <Trophy className="w-5 h-5 inline mr-2" />, label: 'Prediction' },
+                  { id: 'tempos', icon: <Target className="w-5 h-5 inline mr-2" />, label: 'Paces' },
+				  { id: 'plan', icon: <Target className="w-5 h-5 inline mr-2" />, label: 'Training Plan' },
+                  { id: 'empfehlungen', icon: <TrendingUp className="w-5 h-5 inline mr-2" />, label: 'Recommendations' },
                 ].map(tab => (
                   <button key={tab.id} onClick={() => setActiveTab(tab.id)}
                     className={`flex-1 min-w-[140px] py-3 px-4 rounded-xl font-semibold transition-all ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
@@ -266,44 +266,44 @@
               <div className="bg-white rounded-2xl shadow-xl p-8">
                 <h2 className="text-1xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                   <Heart className="w-7 h-7 text-red-500" />
-                  Herzfrequenz-Zonen
+                  Heart Rate Zones
                 </h2>
 
                 <div className="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
                   <p className="text-yellow-800 font-semibold">
-                    💡 Empfehlung: Führe einen Belastungstest durch, um deine tatsächliche maximale Herzfrequenz zu ermitteln.
+                    💡 Recommendation: Do a stress test to determine your actual maximum heart rate.
                   </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Deine maximale HF (gemessen oder aus einem Test)</label>
-                    <input type="number" value={hfMax} onChange={e => setHfMax(e.target.value)} placeholder="z. B. 185"
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Your maximum HR (measured or from a test)</label>
+                    <input type="number" value={hfMax} onChange={e => setHfMax(e.target.value)} placeholder="e.g. 185"
                       className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
                   </div>
                   <div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Geschlecht</label>
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Sex</label>
                     <div className="flex gap-3 mb-3">
                       <button
                         onClick={() => setSexo('hombre')}
                         className={`flex-1 py-2 px-4 rounded-xl font-semibold border-2 transition-colors ${sexo === 'hombre' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-700 border-gray-300 hover:border-indigo-400'}`}>
-                        Männlich
+                        Male
                       </button>
                       <button
                         onClick={() => setSexo('mujer')}
                         className={`flex-1 py-2 px-4 rounded-xl font-semibold border-2 transition-colors ${sexo === 'mujer' ? 'bg-pink-500 text-white border-pink-500' : 'bg-white text-gray-700 border-gray-300 hover:border-pink-400'}`}>
-                        Weiblich
+                        Female
                       </button>
                     </div>
-                    <label className="block text-sm font-semibold text-gray-700 mb-2">Alter (zur Berechnung der max. HF)</label>
-                    <input type="number" value={alter} onChange={e => setAlter(e.target.value)} placeholder="z. B. 35"
+                    <label className="block text-sm font-semibold text-gray-700 mb-2">Age (for max HR estimation)</label>
+                    <input type="number" value={alter} onChange={e => setAlter(e.target.value)} placeholder="e.g. 35"
                       className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
                     {alter && (
                       <p className="text-sm text-indigo-600 mt-1 font-medium">
-                        Geschätzte max. HF ({sexo === 'hombre' ? '211 − 0,64 × Alter' : '215 − 0,64 × Alter'}): {sexo === 'hombre' ? Math.round(211 - 0.64 * parseInt(alter)) : Math.round(215 - 0.64 * parseInt(alter))} bpm
+                        Estimated max HR ({sexo === 'hombre' ? '211 − 0.64 × Age' : '215 − 0.64 × Age'}): {sexo === 'hombre' ? Math.round(211 - 0.64 * parseInt(alter)) : Math.round(215 - 0.64 * parseInt(alter))} bpm
                         <button onClick={() => setHfMax(String(sexo === 'hombre' ? Math.round(211 - 0.64 * parseInt(alter)) : Math.round(215 - 0.64 * parseInt(alter))))}
                           className="ml-2 text-xs bg-indigo-600 text-white px-2 py-0.5 rounded-lg hover:bg-indigo-700">
-                          Übernehmen
+                          Apply
                         </button>
                       </p>
                     )}
@@ -312,14 +312,14 @@
 
                 {hfZonen && (
                   <div className="space-y-3">
-                    <h3 className="text-xl font-bold text-gray-800 mb-4">Deine Trainingszonen:</h3>
+                    <h3 className="text-xl font-bold text-gray-800 mb-4">Your Training Zones:</h3>
  {[
-  { label: 'Erholung', percent: '(<68%)', range: `< ${hfZonen.erholung.max} bpm`, colors: 'from-green-50 to-green-100 border-green-300 text-green-800' },
+  { label: 'Recovery', percent: '(<68%)', range: `< ${hfZonen.erholung.max} bpm`, colors: 'from-green-50 to-green-100 border-green-300 text-green-800' },
   { label: 'Zone 1', percent: '(68-72%)', range: `${hfZonen.zone1.min}-${hfZonen.zone1.max} bpm`, colors: 'from-blue-50 to-blue-100 border-blue-300 text-blue-800' },
   { label: 'Zone 2', percent: '(77-79%)', range: `${hfZonen.zone2.min}-${hfZonen.zone2.max} bpm`, colors: 'from-cyan-50 to-cyan-100 border-cyan-300 text-cyan-800' },
   { label: 'Zone 3', percent: '(80-84%)', range: `${hfZonen.zone3.min}-${hfZonen.zone3.max} bpm`, colors: 'from-orange-50 to-orange-100 border-orange-300 text-orange-800' },
   { label: 'Zone 4', percent: '(85-88%)', range: `${hfZonen.zone4.min}-${hfZonen.zone4.max} bpm`, colors: 'from-red-50 to-red-100 border-red-300 text-red-800' },
-  { label: 'Wettkampf-\ntempo', percent: '(89-92%)', range: `${hfZonen.wettkampf.min}-${hfZonen.wettkampf.max} bpm`, colors: 'from-purple-50 to-purple-100 border-purple-300 text-purple-800' },
+  { label: 'Race\nPace', percent: '(89-92%)', range: `${hfZonen.wettkampf.min}-${hfZonen.wettkampf.max} bpm`, colors: 'from-purple-50 to-purple-100 border-purple-300 text-purple-800' },
 ].map(z => {
   const [c1,c2,c3,c4] = z.colors.split(' ');
   return (
@@ -334,11 +334,11 @@
 
                 {hfZonen && (
                   <div className="mt-8">
-                    <h3 className="text-xl font-bold text-gray-800 mb-4">Vollständige Herzfrequenztabelle:</h3>
+                    <h3 className="text-xl font-bold text-gray-800 mb-4">Complete Heart Rate Table:</h3>
                     <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden">
                       <div className="grid grid-cols-2 bg-blue-600 text-white font-bold p-3">
-                        <div className="text-center text-sm">Intensität</div>
-                        <div className="text-center text-sm">Herzfrequenz</div>
+                        <div className="text-center text-sm">Intensity</div>
+                        <div className="text-center text-sm">Heart Rate</div>
                       </div>
                       <div className="max-h-96 overflow-y-auto">
                         {Array.from({ length: 36 }, (_, i) => {
@@ -366,7 +366,7 @@
               <div className="bg-white rounded-2xl shadow-xl p-8">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                   <Trophy className="w-7 h-7 text-yellow-500" />
-                  Zeitenprognose
+                  Race Time Prediction
                 </h2>
 
                 <div className="mb-6 bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
@@ -377,16 +377,16 @@
 
                 <div className="grid md:grid-cols-2 gap-8 mb-6">
                   <div className="bg-gray-50 p-6 rounded-xl">
-                    <h3 className="font-bold text-base text-gray-800 mb-4">Deine 10-km-Zeit</h3>
+                    <h3 className="font-bold text-base text-gray-800 mb-4">Your 10 km time</h3>
                     <div className="flex gap-3">
                       <div className="flex-1">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Minuten</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Minutes</label>
                         <input type="number" value={zeit10k.min}
                           onChange={e => { setZeit10k({ ...zeit10k, min: e.target.value }); setZeitMarathon({ h: '', min: '' }); }}
                           placeholder="40" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
                       </div>
                       <div className="flex-1">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Sekunden</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Seconds</label>
                         <input type="number" value={zeit10k.sek} onChange={e => setZeit10k({ ...zeit10k, sek: e.target.value })}
                           placeholder="00" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
                       </div>
@@ -394,16 +394,16 @@
                   </div>
 
                   <div className="bg-gray-50 p-6 rounded-xl">
-                    <h3 className="font-bold text-base text-gray-800 mb-4">Deine Marathon-Zeit</h3>
+                    <h3 className="font-bold text-base text-gray-800 mb-4">Your Marathon time</h3>
                     <div className="flex gap-3">
                       <div className="flex-1">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Stunden</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Hours</label>
                         <input type="number" value={zeitMarathon.h}
                           onChange={e => { setZeitMarathon({ ...zeitMarathon, h: e.target.value }); setZeit10k({ min: '', sek: '' }); }}
                           placeholder="3" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
                       </div>
                       <div className="flex-1">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Minuten</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Minutes</label>
                         <input type="number" value={zeitMarathon.min} onChange={e => setZeitMarathon({ ...zeitMarathon, min: e.target.value })}
                           placeholder="30" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
                       </div>
@@ -413,17 +413,17 @@
 
                 {vorhersagen && (
                   <div>
-                    <h3 className="text-xl font-bold text-gray-800 mb-4">Deine vorhergesagten Zeiten:</h3>
+                    <h3 className="text-xl font-bold text-gray-800 mb-4">Your predicted times:</h3>
                     <div className="grid md:grid-cols-3 gap-4">
                       {[
-                        { label: '10 Kilometer', key: '10k', dist: 10, color: 'from-green-500 to-green-600' },
-                        { label: 'Halbmarathon', key: '21k', dist: 21.097, color: 'from-blue-500 to-blue-600' },
+                        { label: '10 Kilometers', key: '10k', dist: 10, color: 'from-green-500 to-green-600' },
+                        { label: 'Half Marathon', key: '21k', dist: 21.097, color: 'from-blue-500 to-blue-600' },
                         { label: 'Marathon', key: '42k', dist: 42.195, color: 'from-purple-500 to-purple-600' },
                       ].map(d => (
                         <div key={d.key} className={`bg-gradient-to-br ${d.color} p-6 rounded-xl text-white shadow-lg`}>
                           <p className="text-sm font-semibold mb-2 opacity-90">{d.label}</p>
                           <p className="text-3xl font-bold mb-2">{sekundenZuFormat(vorhersagen[d.key])}</p>
-                          <p className="text-base opacity-90">Tempo: {sekundenZuMinKm(vorhersagen[d.key] / d.dist)} min/km</p>
+                          <p className="text-base opacity-90">Pace: {sekundenZuMinKm(vorhersagen[d.key] / d.dist)} min/km</p>
                         </div>
                       ))}
                     </div>
@@ -432,15 +432,15 @@
                       <div className="mt-6 bg-indigo-50 border-2 border-indigo-300 p-6 rounded-xl">
                         <h4 className="font-bold text-indigo-900 text-lg mb-3 flex items-center gap-2">
                           <TrendingUp className="w-5 h-5" />
-                          Empfehlungen für dein Niveau ({niveau.charAt(0).toUpperCase() + niveau.slice(1)})
+                          Recommendations for your level ({niveau.charAt(0).toUpperCase() + niveau.slice(1)})
                         </h4>
                         <div className="grid md:grid-cols-2 gap-4">
                           <div className="bg-white p-4 rounded-lg">
-                            <p className="text-sm text-gray-600 mb-1">Kilometer pro Woche</p>
+                            <p className="text-sm text-gray-600 mb-1">Kilometers per week</p>
                             <p className="text-2xl font-bold text-indigo-600">{empfehlungen[niveau].kmWoche}</p>
                           </div>
                           <div className="bg-white p-4 rounded-lg">
-                            <p className="text-sm text-gray-600 mb-1">Qualitätstage</p>
+                            <p className="text-sm text-gray-600 mb-1">Quality days</p>
                             <p className="text-2xl font-bold text-indigo-600">{empfehlungen[niveau].qualitätsTage}</p>
                           </div>
                         </div>
@@ -455,27 +455,27 @@
               <div className="bg-white rounded-2xl shadow-xl p-8">
                 <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                   <Target className="w-7 h-7 text-indigo-500" />
-                  Trainingstempos
+                  Training Paces
                 </h2>
 
                 <div className="mb-6 bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded">
                   <p className="text-indigo-800">
-                    <strong>Gib deine Zeit ein</strong> und wähle dein Ziel, um personalisierte Tempos zu erhalten.
+                    <strong>Enter your time</strong> and choose your goal to get personalized paces.
                   </p>
                 </div>
 
                 <div className="grid md:grid-cols-2 gap-6 mb-6">
                   <div className="bg-gray-50 p-6 rounded-xl">
-                    <h3 className="font-bold text-lg text-gray-800 mb-4">Deine 10-km-Zeit</h3>
+                    <h3 className="font-bold text-lg text-gray-800 mb-4">Your 10 km time</h3>
                     <div className="flex gap-3">
                       <div className="flex-1">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Minuten</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Minutes</label>
                         <input type="number" value={zeit10k.min}
                           onChange={e => { setZeit10k({ ...zeit10k, min: e.target.value }); setZeitMarathon({ h: '', min: '' }); }}
                           placeholder="40" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
                       </div>
                       <div className="flex-1">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Sekunden</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Seconds</label>
                         <input type="number" value={zeit10k.sek} onChange={e => setZeit10k({ ...zeit10k, sek: e.target.value })}
                           placeholder="00" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
                       </div>
@@ -483,16 +483,16 @@
                   </div>
 
                   <div className="bg-gray-50 p-6 rounded-xl">
-                    <h3 className="font-bold text-lg text-gray-800 mb-4">Deine Marathon-Zeit</h3>
+                    <h3 className="font-bold text-lg text-gray-800 mb-4">Your Marathon time</h3>
                     <div className="flex gap-3">
                       <div className="flex-1">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Stunden</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Hours</label>
                         <input type="number" value={zeitMarathon.h}
                           onChange={e => { setZeitMarathon({ ...zeitMarathon, h: e.target.value }); setZeit10k({ min: '', sek: '' }); }}
                           placeholder="3" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
                       </div>
                       <div className="flex-1">
-                        <label className="block text-sm font-semibold text-gray-700 mb-2">Minuten</label>
+                        <label className="block text-sm font-semibold text-gray-700 mb-2">Minutes</label>
                         <input type="number" value={zeitMarathon.min} onChange={e => setZeitMarathon({ ...zeitMarathon, min: e.target.value })}
                           placeholder="30" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
                       </div>
@@ -501,10 +501,10 @@
                 </div>
 
                 <div className="mb-6">
-                  <label className="block text-sm font-semibold text-gray-700 mb-3">Worauf bereitest du dich vor?</label>
+                  <label className="block text-sm font-semibold text-gray-700 mb-3">What are you training for?</label>
 				  <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center">
                  
-                    {[['10k','10 km / Halbmarathon'],['maraton','Marathon']].map(([val,lbl]) => (
+                    {[['10k','10 km / Half Marathon'],['maraton','Marathon']].map(([val,lbl]) => (
                       <button key={val} onClick={() => setZielDistanz(val)}
                         className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all ${zielDistanz === val ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
                         {lbl}
@@ -515,70 +515,70 @@
 
                 {tempos && (
                   <div className="space-y-4">
-                    <h3 className="text-xl font-bold text-gray-800 mb-4">Deine Trainingstempos:</h3>
+                    <h3 className="text-xl font-bold text-gray-800 mb-4">Deine Training Paces:</h3>
 
                     <div className="bg-gradient-to-r from-green-50 to-green-100 p-5 rounded-xl border-2 border-green-300">
                       <div className="flex items-center gap-3 mb-2">
                         <Clock className="w-6 h-6 text-green-700" />
-                        <h4 className="font-bold text-green-900 text-lg">Lockerer Lauf</h4>
+                        <h4 className="font-bold text-green-900 text-lg">Easy Run</h4>
                       </div>
-                      <p className="text-sm text-green-700 mb-2">Aerobe Basis – 70–80 % deines Trainings</p>
+                      <p className="text-sm text-green-700 mb-2">Aerobic base – 70–80% of your training</p>
                       <p className="text-xl font-bold text-green-800 whitespace-nowrap">
-                        {sekundenZuMinKm(tempos.lockererLauf.min)} – {sekundenZuMinKm(tempos.lockererLauf.max)} Min/km
+                        {sekundenZuMinKm(tempos.lockererLauf.min)} – {sekundenZuMinKm(tempos.lockererLauf.max)} min/km
                       </p>
                     </div>
 
                     <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-5 rounded-xl border-2 border-orange-300">
                       <div className="flex items-center gap-3 mb-2">
                         <Zap className="w-6 h-6 text-orange-700" />
-                        <h4 className="font-bold text-orange-900 text-lg">Renntempo</h4>
+                        <h4 className="font-bold text-orange-900 text-lg">Race Pace</h4>
                       </div>
                       <p className="text-sm text-orange-700 mb-2">Lauf über {tempos.rennTempo.km}</p>
-                      <p className="text-xl font-bold text-orange-800 whitespace-nowrap">{sekundenZuMinKm(tempos.rennTempo.tempo)} Min/km</p>
+                      <p className="text-xl font-bold text-orange-800 whitespace-nowrap">{sekundenZuMinKm(tempos.rennTempo.tempo)} min/km</p>
                     </div>
 
                     <div className="bg-gradient-to-r from-red-50 to-red-100 p-5 rounded-xl border-2 border-red-300">
                       <div className="flex items-center gap-3 mb-2">
                         <Target className="w-6 h-6 text-red-700" />
-                        <h4 className="font-bold text-red-900 text-lg">Intensiver Lauf</h4>
+                        <h4 className="font-bold text-red-900 text-lg">Tempo Run</h4>
                       </div>
-                      <p className="text-sm text-red-700 mb-2">Distanz: {tempos.intensiverLauf.distanz}</p>
+                      <p className="text-sm text-red-700 mb-2">Distance: {tempos.intensiverLauf.distanz}</p>
                       <p className="text-xl font-bold text-red-800 whitespace-nowrap">
-                        {sekundenZuMinKm(tempos.intensiverLauf.tempoMin)} – {sekundenZuMinKm(tempos.intensiverLauf.tempoMax)} Min/km
+                        {sekundenZuMinKm(tempos.intensiverLauf.tempoMin)} – {sekundenZuMinKm(tempos.intensiverLauf.tempoMax)} min/km
                       </p>
                     </div>
 
                     <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-5 rounded-xl border-2 border-blue-300">
                       <div className="flex items-center gap-3 mb-2">
                         <Activity className="w-6 h-6 text-blue-700" />
-                        <h4 className="font-bold text-blue-900 text-lg">Langer Lauf (Grundlage)</h4>
+                        <h4 className="font-bold text-blue-900 text-lg">Long Run (Base)</h4>
                       </div>
                       <p className="text-sm text-blue-700 mb-1">{tempos.langerLaufBasic.dauer}</p>
                       <p className="text-sm text-blue-600 italic mb-2">{tempos.langerLaufBasic.beschreibung}</p>
                       <p className="text-xl font-bold text-blue-800 whitespace-nowrap">
-                        {sekundenZuMinKm(tempos.langerLaufBasic.tempoMin)} – {sekundenZuMinKm(tempos.langerLaufBasic.tempoMax)} Min/km
+                        {sekundenZuMinKm(tempos.langerLaufBasic.tempoMin)} – {sekundenZuMinKm(tempos.langerLaufBasic.tempoMax)} min/km
                       </p>
                     </div>
 
                     <div className="bg-gradient-to-r from-indigo-50 to-indigo-100 p-5 rounded-xl border-2 border-indigo-300">
                       <div className="flex items-center gap-3 mb-2">
                         <Activity className="w-6 h-6 text-indigo-700" />
-                        <h4 className="font-bold text-indigo-900 text-lg">Langer Lauf für den Marathon</h4>
+                        <h4 className="font-bold text-indigo-900 text-lg">Marathon Long Run</h4>
                       </div>
                       <p className="text-sm text-indigo-700 mb-1">{tempos.langerLaufMarathon.dauer}</p>
                       <p className="text-sm text-indigo-600 italic mb-2">{tempos.langerLaufMarathon.beschreibung}</p>
                       <p className="text-xl font-bold text-indigo-800 whitespace-nowrap">
-                        {sekundenZuMinKm(tempos.langerLaufMarathon.tempoMin)} – {sekundenZuMinKm(tempos.langerLaufMarathon.tempoMax)} Min/km
+                        {sekundenZuMinKm(tempos.langerLaufMarathon.tempoMin)} – {sekundenZuMinKm(tempos.langerLaufMarathon.tempoMax)} min/km
                       </p>
                     </div>
 
                     <div className="mt-6 bg-gray-50 p-5 rounded-xl border-2 border-gray-200">
-                      <h4 className="font-bold text-gray-800 mb-3">📋 Trainingstipps:</h4>
+                      <h4 className="font-bold text-gray-800 mb-3">📋 Training Tips:</h4>
                       <ul className="space-y-2 text-gray-700">
-                        <li>• Der größte Teil der Kilometer sollte in lockerem Tempo absolviert werden.</li>
-                        <li>• 1–2 Qualitätseinheiten pro Woche einplanen.</li>
-                        <li>• Ausreichend zwischen den harten Einheiten erholen.</li>
-                        <li>• Den Umfang schrittweise steigern (10-Prozent-Regel).</li>
+                        <li>• Most of your kilometers should be run at easy pace.</li>
+                        <li>• Plan 1–2 quality sessions per week.</li>
+                        <li>• Allow adequate recovery between hard sessions.</li>
+                        <li>• Increase volume gradually (10% rule).</li>
                       </ul>
                     </div>
                   </div>
@@ -598,36 +598,36 @@
               const z4max = hfOk ? Math.round(hf * 0.92) : null;
               const ppm = (min, max) => min ? `${min}–${max} bpm` : '—';
               const days10k = [
-                { day: 'Dienstag', title: 'Intensiver Lauf', color: 'bg-blue-500', ppm: ppm(z3min, z3max), pct: '(82–84 %)', dauer: '40–50 Min.' },
-                { day: 'Donnerstag', title: 'Lockerer Lauf', color: 'bg-green-500', ppm: ppm(z1min, z1max), pct: '(70–73 %)', dauer: '40–60 Min.' },
-                { day: 'Samstag', title: 'Renntempo', color: 'bg-red-500', ppm: ppm(z4min, z4max), pct: '(88–92 %)', dauer: '30–40 Min.' },
-                { day: 'Sonntag', title: 'Langer Lauf', color: 'bg-green-500', ppm: ppm(z1min, z1max), pct: '(70–73 %)', dauer: '1:30–2:00 Std.' },
+                { day: 'Dienstag', title: 'Tempo Run', color: 'bg-blue-500', ppm: ppm(z3min, z3max), pct: '(82–84 %)', dauer: '40–50 Min.' },
+                { day: 'Donnerstag', title: 'Easy Run', color: 'bg-green-500', ppm: ppm(z1min, z1max), pct: '(70–73 %)', dauer: '40–60 Min.' },
+                { day: 'Samstag', title: 'Race Pace', color: 'bg-red-500', ppm: ppm(z4min, z4max), pct: '(88–92 %)', dauer: '30–40 Min.' },
+                { day: 'Sunday', title: 'Long Run', color: 'bg-green-500', ppm: ppm(z1min, z1max), pct: '(70–73 %)', dauer: '1:30–2:00 Std.' },
               ];
               const daysMarathon = [
-                { day: 'Dienstag', title: 'Intensiver Lauf', color: 'bg-blue-500', ppm: ppm(z3min, z3max), pct: '(82–84 %)', dauer: '50–60 Min.' },
-                { day: 'Mittwoch', title: 'Lockerer Lauf', color: 'bg-yellow-500', ppm: ppm (z1min, z1max), pct: '(70-73 %)', dauer: '90–100 Min.' },
-                { day: 'Donnerstag', title: 'Lockerer Lauf', color: 'bg-green-500', ppm: z2 ? `${z2} bpm` : '—', pct: '(77 %)', dauer: '45–60 Min.' },
-                { day: 'Samstag', title: 'Renntempo', color: 'bg-red-500', ppm: ppm(z4min, z4max), pct: '(88–92 %)', dauer: '30–40 Min.' },
-                { day: 'Sonntag', title: 'Langer Lauf', color: 'bg-green-500', ppm: ppm(z1min, z1max), pct: '(70–73 %)', dauer: '2:15 Std.–3:00 Std.' },
+                { day: 'Dienstag', title: 'Tempo Run', color: 'bg-blue-500', ppm: ppm(z3min, z3max), pct: '(82–84 %)', dauer: '50–60 Min.' },
+                { day: 'Mittwoch', title: 'Easy Run', color: 'bg-yellow-500', ppm: ppm (z1min, z1max), pct: '(70-73 %)', dauer: '1:30–1:40 Std.' },
+                { day: 'Donnerstag', title: 'Easy Run', color: 'bg-green-500', ppm: z2 ? `${z2} bpm` : '—', pct: '(77 %)', dauer: '45–60 Min.' },
+                { day: 'Samstag', title: 'Race Pace', color: 'bg-red-500', ppm: ppm(z4min, z4max), pct: '(88–92 %)', dauer: '40–50 Min.' },
+                { day: 'Sunday', title: 'Long Run', color: 'bg-green-500', ppm: ppm(z1min, z1max), pct: '(70–73 %)', dauer: '2:15 Std.–3:00 Std.' },
               ];
               const activeDays = planTyp === '10k' ? days10k : daysMarathon;
               return (
                 <div className="bg-white rounded-2xl shadow-xl p-8">
                   <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
                     <Trophy className="w-7 h-7 text-indigo-500" />
-                    Trainingsplan / Woche
+                    Weekly Training Plan
                   </h2>
 
                   {!hfOk && (
                     <div className="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
                       <p className="text-yellow-800 font-semibold">
-                        ⚠️ Gib deine maximale Herzfrequenz im Tab <em>HF-Zonen</em> ein, um persönliche Pulsbereiche zu sehen.
+                        ⚠️ Gib deine maximale Heart Rate im Tab <em>HF-Zonen</em> ein, um persönliche Pulsbereiche zu sehen.
                       </p>
                     </div>
                   )}
 
                   <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center">
-                    {[['10k', '10 km / Halbmarathon', '4 Tage pro Woche'], ['marathon', 'Marathon', '5 Tage pro Woche']].map(([val, lbl, sub]) => (
+                    {[['10k', '10 km / Half Marathon', '4 days per week'], ['marathon', 'Marathon', '5 days per week']].map(([val, lbl, sub]) => (
                       <button key={val} onClick={() => setPlanTyp(val)}
                         className={`flex-1 p-5 rounded-xl text-center transition-all ${planTyp === val ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
                         <div className="text-lg font-bold">{lbl}</div>
@@ -636,7 +636,7 @@
                     ))}
                   </div>
 
-                  <h3 className="text-xl font-bold text-gray-800 mb-4">Dein persönlicher Plan:</h3>
+                  <h3 className="text-xl font-bold text-gray-800 mb-4">Your personal plan:</h3>
                   <div className="space-y-4">
                     {activeDays.map((d, i) => (
                       <div key={i} className={`${d.color} text-white p-5 rounded-xl`}>
@@ -655,7 +655,7 @@
             {activeTab === 'empfehlungen' && (
               <div className="bg-white rounded-2xl shadow-xl p-4 md:p-8">
                 <h2 className="text-xl md:text-3xl font-bold text-gray-800 mb-3 md:mb-4 text-center">
-                  Überlegungen und Empfehlungen zur Marathon-Vorbereitung
+                  Considerations and Recommendations for Marathon Preparation
                 </h2>
                 <p className="text-center text-base md:text-lg text-indigo-600 font-semibold mb-6 md:mb-8">
    
@@ -663,87 +663,87 @@
 
                 <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-4 md:p-6 rounded-xl mb-6 md:mb-8 border-l-4 border-indigo-500">
                   <p className="text-sm md:text-base text-gray-700 leading-relaxed italic">
-                    Einen Marathon zu laufen bedeutet nicht nur, 42,195 Kilometer zurückzulegen: Es ist ein physiologischer, mentaler und emotionaler Transformationsprozess, der bei jedem, der ihn erlebt, tiefe Spuren hinterlässt. In über 45 Jahren Laufsport, mit 28 absolvierten Marathons und einer persönlichen Bestzeit unter 2:19 h, habe ich gelernt, dass der Erfolg auf dieser Distanz aus der genauen Kombination von Wissenschaft, Beständigkeit und Leidenschaft entsteht. Diese Zeilen enthalten technische und persönliche Überlegungen, die dir helfen sollen, deinen Marathon mit Herz und Respekt vor der Distanz vorzubereiten.
+                    Running a marathon means not only covering 42.195 kilometers: it is a physiological, mental, and emotional transformation process that leaves deep marks on everyone who experiences it. After more than 45 years of running, with 28 marathons completed and a personal best under 2:19 h, I have learned that success over this distance comes from the precise combination of science, consistency, and passion. These lines contain technical and personal reflections to help you prepare your marathon with heart and respect for the distance.
                   </p>
                 </div>
 
                 <div className="space-y-4 md:space-y-6 max-h-[500px] md:max-h-[600px] overflow-y-auto pr-2 md:pr-4">
                   {[
                     {
-                      n: '1', title: 'Die Entscheidung: Warum ein Marathon?',
-                      text: 'Der Marathon liegt im Trend, ist aber keine bloße Mode. Er ist eine ernsthafte Entscheidung, die läuferische Reife erfordert. Bevor man ihn in Angriff nimmt, ist es ratsam, mindestens zwei Jahre regelmäßig zu laufen und an 10-km- und Halbmarathon-Wettkämpfen teilgenommen zu haben. Die Vorbereitung auf den Marathon wird deinen Alltag verändern. Training und Erholung brauchen ihren Platz. Es ist kein Verzicht - sondern ein Traum, der sich erfüllt und dich als Läufer und als Mensch wachsen lässt.'
+                      n: '1', title: 'The Decision: Why a Marathon?',
+                      text: 'The marathon is trendy, but it is no mere fashion. It is a serious decision that requires running maturity. Before attempting one, it is advisable to have at least two years of regular running and to have competed in 10 km and half marathon races. Preparing for the marathon will change your daily life. Training and recovery need their place. It is not a sacrifice — it is a dream fulfilled that will help you grow as a runner and as a person.'
                     },
                     {
-                      n: '2', title: 'Gesundheit: Die Grundlage der Leistung',
-                      text: 'Bevor du mit der Vorbereitung beginnst, solltest Du eine ärztliche Untersuchung durchführen. Eine Blutuntersuchung, Elektrokardiogramm, und ein Belastungstest sind eine gute Basis und empfehlenswert für das Marathontraining. Gesundheit ist nicht verhandelbar: Ohne sie gibt es keine Leistung, keinen Genuss und keinen Marathon.'
+                      n: '2', title: 'Health: The Foundation of Performance',
+                      text: 'Before starting preparation, you should undergo a medical examination. A blood test, electrocardiogram, and stress test are a good foundation and recommended for marathon training. Health is non-negotiable: without it, there is no performance, no enjoyment, and no marathon.'
                     },
                     {
-                      n: '3', title: 'Planung: Wochen und Struktur',
-                      text: '8 bis 11 Wochen spezifisches Training sind eine gute Grundlage für einen Marathon. Der Schlüssel liegt in der Progression: Umfang und Intensität kontrolliert steigern und dabei die Prinzipien von Belastung, Erholung und Anpassung beachten.'
+                      n: '3', title: 'Planning: Weeks and Structure',
+                      text: '8 bis 11 Wochen spezifisches Training sind eine gute Grundlage für einen Marathon. Der Schlüssel liegt in der Progression: Umfang und Intensity kontrolliert steigern und dabei die Prinzipien von Belastung, Erholung und Anpassung beachten.'
                     },
                     {
-                      n: '4', title: 'Trainingsumgebung: Ort und Gemeinschaft',
-                      text: 'Trainiere auf vertrauten Strecken in der Nähe deines Zuhauses, die Logistik und Kontrolle des Trainings erleichtern. Trainiere wann immer möglich in Begleitung: Die Gruppe gibt an schwierigen Tagen Halt und vervielfacht die Motivation. Der Marathon wird allein gelaufen, aber besser im Team vorbereitet.'
+                      n: '4', title: 'Training Environment: Place and Community',
+                      text: 'Train on familiar routes near your home that make logistics and training control easier. Train with company whenever possible: the group provides support on difficult days and multiplies motivation. The marathon is run alone, but better prepared as a team.'
                     },
                     {
-                      n: '5', title: 'Realistisches Ziel: Viel mehr als eine Zeit',
-                      text: 'Beim ersten Marathon ist das Hauptziel, zu finishen. Die Zeit ergibt sich als Folge guter Arbeit. Die Ziellinie zum ersten Mal zu überqueren ist eine kaum zu beschreibende emotionale Erfahrung: Tränen, Stolz, innere Stille und die tiefe Gewissheit, alles gegeben zu haben.'
+                      n: '5', title: 'Realistic Goal: Much More Than a Time',
+                      text: 'In your first marathon, the main goal is to finish. The time comes as a result of good work. Crossing the finish line for the first time is an emotional experience hard to describe: tears, pride, inner stillness, and the deep certainty of having given everything.'
                     },
                     {
-                      n: '6', title: 'Trainingsmethodik',
-                      text: 'Kombiniere drei grundlegende Säulen: aerobes Volumen (lockere und lange Läufe) zum zu Aufbau der physiologischen Basis; Marathontempo zur Optimierung der Laufökonomie und Gewöhnung an die spezifische Belastung; sowie Qualitätsarbeit (Tempowechsel, intensive Läufe, Steigerungen, Berge) zur Verbesserung der VO₂max und der aeroben Schwelle.'
+                      n: '6', title: 'Training Methodology',
+                      text: 'Combine three fundamental pillars: aerobic volume (easy and long runs) to build the physiological base; marathon pace to optimize running economy and get used to the specific effort; and quality work (fartlek, tempo runs, strides, hills) to improve VO₂max and the aerobic threshold.'
                     },
                     {
-                      n: '7', title: 'Tempos und Wochenumfang',
-                      text: 'Hobbyläufer sollten zwischen 60 und 70 km pro Woche laufen, angepasst an ihr Niveau. Die Tempos sollten überwiegend aerob sein (Zone 2–3), denn dort wird die eigentliche Ausdauer aufgebaut. Langsam zu trainieren ist keine Zeitverschwendung – es ist eine Investition in die Zukunft.'
+                      n: '7', title: 'Paces and Weekly Volume',
+                      text: 'Amateur runners should run between 60 and 70 km per week, adjusted to their level. The paces should be predominantly aerobic (Zone 2–3), because that is where true endurance is built. Training slowly is not a waste of time — it is an investment in the future.'
                     },
                     {
-                      n: '8', title: 'Intensitätskontrolle: Pulsmesser und Körpergefühl',
-                      text: 'Die eigene maximale Herzfrequenz und aerobe Schwelle zu kennen, ermöglicht präzises Training. Technologie ist hilfreich, aber vergiss nicht, auf deinen Körper zu hören: Müdigkeit, Erholung und Stimmung sind ebenfalls wichtig.'
+                      n: '8', title: 'Intensityskontrolle: Pulsmesser und Körpergefühl',
+                      text: 'Die eigene maximale Heart Rate und aerobe Schwelle zu kennen, ermöglicht präzises Training. Technologie ist hilfreich, aber vergiss nicht, auf deinen Körper zu hören: Müdigkeit, Erholung und Stimmung sind ebenfalls wichtig.'
                     },
                     {
-                      n: '9', title: 'Der lange Lauf: Das Labor des Marathonläufers',
-                      text: 'Der lange Lauf ist eine wichtige Säule des Marathon-Training. Führe ihn sonntags frühmorgens durch. Hier werden Stoffwechsel, Geist und Geduld trainiert.'
+                      n: '9', title: 'The Long Run: The Marathon Runner\'s Laboratory',
+                      text: 'The long run is a key pillar of marathon training. Do it on Sunday mornings. Here metabolism, mind, and patience are trained.'
                     },
                     {
-                      n: '10', title: 'Zeit oder Kilometer?',
-                      text: 'Für die meisten Läufer/innen ist das Training nach Zeit einfacher zu gestalten: 2:15–3:00 Stunden kontinuierliches Laufen fördert die gewünschten Anpassungen besser als eine starre Kilometerzahl.'
+                      n: '10', title: 'Time or Kilometers?',
+                      text: 'Für die meisten Läufer/innen ist das Training nach Zeit einfacher zu gestalten: 2:15–3:00 Hours kontinuierliches Laufen fördert die gewünschten Anpassungen besser als eine starre Kilometerzahl.'
                     },
                     {
-                      n: '11', title: 'Metabolische Anpassung: Nüchterntraining',
-                      text: 'Den langen Lauf nüchtern zu absolvieren – bei 70–72 % der maximalen HF – verbessert die Fettverbrennung und schont die Glykogenspeicher. Dieser Prozess ist entscheidend, um die gefürchtete „Mauer bei km 30" zu vermeiden. Es ist physiologisches Training … und auch eine Übung im Vertrauen auf den eigenen Körper.'
+                      n: '11', title: 'Metabolic Adaptation: Fasted Training',
+                      text: 'Doing the long run in a fasted state — at 70–72% of maximum HR — improves fat burning and spares glycogen stores. This process is key to avoiding the dreaded "wall at km 30". It is physiological training... and also an exercise in trusting your own body.'
                     },
                     {
-                      n: '12', title: 'Erholung: Wiederaufbau für weiteres Wachstum',
-                      text: 'Ohne Erholung findet keine Anpassung statt. Nach dem langen Lauf Kohlenhydrate und hochwertige Proteine auffüllen: Haferflocken, reifes Obst, gekochte Kartoffeln, Vollkornreis. Jede Mahlzeit ist eine Gelegenheit, Körper und Motivation wieder aufzubauen.'
+                      n: '12', title: 'Recovery: Rebuilding for Further Growth',
+                      text: 'Without recovery, there is no adaptation. After the long run, replenish with carbohydrates and quality proteins: oats, ripe fruit, boiled potatoes, whole grain rice. Every meal is an opportunity to rebuild body and motivation.'
                     },
                     {
-                      n: '13', title: 'Bewusste Ernährung',
-                      text: 'Eine Ernährung auf Basis echter Lebensmittel – Gemüse, Obst, Hülsenfrüchte, Vollkornprodukte und native Öle – ist die beste natürliche Unterstützung. Industriellen Zucker reduzieren: weniger Blutzuckerspitzen, mehr Energie- und emotionale Stabilität.'
+                      n: '13', title: 'Mindful Nutrition',
+                      text: 'A diet based on real foods — vegetables, fruit, legumes, whole grains, and unrefined oils — is the best natural support. Reduce industrial sugar: fewer blood sugar spikes, more energy and emotional stability.'
                     },
                     {
-                      n: '14', title: 'Mahlzeiten und metabolische Effizienz',
-                      text: '2–3 Mahlzeiten pro Tag fördern die metabolische Flexibilität, verbessern die Fettverbrennung und entlasten das Verdauungssystem. Ein gut ausgeruhtes Verdauungssystem stellt mehr Energie für Training und Erholung bereit.'
+                      n: '14', title: 'Meals and Metabolic Efficiency',
+                      text: '2–3 meals per day promote metabolic flexibility, improve fat burning, and give the digestive system a rest. A well-rested digestive system provides more energy for training and recovery.'
                     },
                     {
-                      n: '15', title: 'Wettkampftempo: Vertrauen aufbauen',
-                      text: 'Trainiere einmal pro Woche im Marathontempo. Beginne mit 5 km und steigere dich auf 12–15 km. Du trainierst nicht nur den Körper – du trainierst auch die Gewissheit, dass du dieses Tempo halten kannst, wenn es darauf ankommt.'
+                      n: '15', title: 'Race Pace: Building Confidence',
+                      text: 'Train at marathon pace once a week. Start with 5 km and build up to 12–15 km. You are not only training your body — you are also training the certainty that you can hold that pace when it matters.'
                     },
                     {
-                      n: '16', title: 'Wettkämpfe als physiologischer und emotionaler Test',
-                      text: '10–15 km im Marathontempo oder einen Halbmarathon vier Wochen vor dem Marathon zu laufen, ist ein ausgezeichneter Test. Er dient dazu, die Form zu überprüfen, Material zu testen und sich zu vergewissern, dass der Traum erreichbar ist.'
+                      n: '16', title: 'Races as Physiological and Emotional Tests',
+                      text: 'Running 10–15 km at marathon pace or a half marathon four weeks before the marathon is an excellent test. It serves to check fitness, test gear, and confirm that the dream is within reach.'
                     },
                     {
-                      n: '17', title: 'Methode: Wirksame Einfachheit',
-                      text: '2–3-mal pro Woche 70–80 Minuten zu laufen, 20–25 Sekunden langsamer als das Marathontempo, baut eine solide Ausdauer auf. Dieses Training ist anspruchsvoll und äußerst wirksam.'
+                      n: '17', title: 'Method: Effective Simplicity',
+                      text: '2–3-mal pro Woche 70–80 Minutes zu laufen, 20–25 Seconds langsamer als das Marathontempo, baut eine solide Ausdauer auf. Dieses Training ist anspruchsvoll und äußerst wirksam.'
                     },
                     {
-                      n: '18', title: 'Schuhe: Vertrauen unter den Füßen',
-                      text: 'Die Schuhe sollten eine Verlängerung des eigenen Körpers sein. Sie werden am Wettkampftag niemals zum ersten Mal getragen. Verwende sie während der gesamten Vorbereitung bei Tempoläufen: Auch Vertrauen will trainiert sein.'
+                      n: '18', title: 'Shoes: Confidence Under Your Feet',
+                      text: 'Shoes should be an extension of your own body. They are never worn for the first time on race day. Use them throughout preparation on pace runs: confidence also needs to be trained.'
                     },
                     {
-                      n: '19', title: 'Der Wettkampftag: Wissenschaft und Emotion',
-                      text: 'Frühstück: ich habe vor dem Marathon nie Kaffee getrunken um meine Nervosität nicht noch mehr zu steigern. Kamillentee und ein Brötchen mit Butter und Honig sowie eine reife Banane – drei Stunden vor dem Start sind eine gute Grundlage. Ein 10-15 minutiges lockeres Einlaufen vor dem Start, bereitet dich auf dem Marathon vor. Und dann, an der Startlinie, wirst du verstehen, dass sich alles gelohnt hat: jeder gelaufener Kilometer, jeder überwundene Zweifel, jedes frühe Aufstehen. Der Marathon wird nicht nur mit den Beinen gelaufen – er wird auch mit dem Kopf gelaufen … und mit dem Herzen.'
+                      n: '19', title: 'Race Day: Science and Emotion',
+                      text: 'Frühstück: ich habe vor dem Marathon nie Kaffee getrunken um meine Nervosität nicht noch mehr zu steigern. Kamillentee und ein Brötchen mit Butter und Honig sowie eine reife Banane – drei Hours vor dem Start sind eine gute Grundlage. Ein 10-15 minutiges lockeres Einlaufen vor dem Start, bereitet dich auf dem Marathon vor. Und dann, an der Startlinie, wirst du verstehen, dass sich alles gelohnt hat: jeder gelaufener Kilometer, jeder überwundene Zweifel, jedes frühe Aufstehen. Der Marathon wird nicht nur mit den Beinen gelaufen – er wird auch mit dem Kopf gelaufen … und mit dem Herzen.'
                     },
                   ].map(p => (
                     <div key={p.n} className="bg-white border-2 border-gray-200 rounded-xl p-4 md:p-6 hovnicht er:shadow-lg transition-shadow">
@@ -753,12 +753,12 @@
                   ))}
 
                   <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-4 md:p-8 rounded-xl border-2 border-amber-300">
-                    <h3 className="text-xl md:text-2xl font-bold text-amber-900 mb-3 md:mb-4 text-center">Epilog</h3>
+                    <h3 className="text-xl md:text-2xl font-bold text-amber-900 mb-3 md:mb-4 text-center">Epilogue</h3>
                     <p className="text-sm md:text-base text-gray-700 leading-relaxed text-center">
-                      Diese Überlegungen entstammen einem dem Laufsport gewidmeten Leben und dem Glück, Erfahrungen mit großartigen Athleten wie Andrés Espinosa oder Julio Rey geteilt zu haben. Von ihnen habe ich gelernt, dass der Marathon ein physiologisches und emotionales Kunstwerk ist: Präzision, Bescheidenheit und Leidenschaft.
+                      These reflections come from a life dedicated to running and the privilege of sharing experiences with great athletes like Andrés Espinosa and Julio Rey. From them I learned that the marathon is a physiological and emotional work of art: precision, humility, and passion.
                     </p>
                     <p className="text-sm md:text-base text-gray-700 leading-relaxed text-center mt-3 md:mt-4 font-semibold">
-                      Wenn diese Zeilen dich bei deiner Vorbereitung begleiten, ist das Ziel bereits erreicht.
+                      If these lines accompany you in your preparation, the goal has already been achieved.
                     </p>
                     <p className="text-center text-lg md:text-xl font-bold text-indigo-700 mt-4 md:mt-6">
                       Manolo
@@ -772,7 +772,7 @@
       );
     };
 
-    ReactDOM.render(<BesserLaufen />, document.getElementById('root'));
+    ReactDOM.render(<RunBetter />, document.getElementById('root'));
   </script>
 
   <script>

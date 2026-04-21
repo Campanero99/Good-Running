@@ -13,7 +13,7 @@
     .container { max-width: 900px; margin: 0 auto; }
     .header { background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,.1);
                padding: 32px; margin-bottom: 20px; text-align: center; }
-    .header h1 { font-size: 2.2rem; font-weight: 800; color: #1f2937; margin-bottom: 8px; }
+    .header h1 { font-size: 1.4rem; font-weight: 800; color: #1f2937; margin-bottom: 8px; white-space: nowrap; }
     .header p  { color: #6b7280; font-size: 1rem; }
     .runner-icon { font-size: 4rem; display: block; margin: 12px auto; cursor: pointer;
                    transition: transform .1s; display: inline-block; }
@@ -90,10 +90,10 @@
     .tips li { margin-bottom:5px; color:#374151; list-style:none; }
     .nivel { background:#eef2ff; border:2px solid #a5b4fc; border-radius:12px; padding:20px; margin-top:16px; }
     .nivel h3 { color:#3730a3; margin-bottom:10px; }
-    .nivel-g { display:grid; grid-template-columns:1fr 1fr; gap:10px; }
-    .nivel-item { background:white; border-radius:9px; padding:14px; }
-    .nivel-item .lbl { font-size:.78rem; color:#6b7280; margin-bottom:3px; }
-    .nivel-item .val { font-size:1.4rem; font-weight:800; color:#4f46e5; }
+    .nivel-g { display:grid; grid-template-columns:1fr; gap:10px; }
+    .nivel-item { background:white; border-radius:9px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between; }
+    .nivel-item .lbl { font-size:.82rem; color:#6b7280; }
+    .nivel-item .val { font-size:1.2rem; font-weight:800; color:#4f46e5; }
     .reco-card { background:white; border:2px solid #e5e7eb; border-radius:12px;
                   padding:14px 18px; margin-bottom:14px; }
     .reco-n    { font-size:.9rem; font-weight:700; color:#4f46e5; margin-bottom:3px; }
@@ -203,7 +203,7 @@
 
   <!-- TRAINING PLAN -->
   <div id="panel-plan" class="panel" style="display:none">
-    <h2>📋 Weekly Training Plan</h2>
+    <h2 style="font-size:1.1rem;white-space:nowrap">📋 Weekly Training Plan</h2>
     <div id="planWarn" class="info info-y" style="display:none">⚠️ Enter your maximum HR in the <em>HR Zones</em> tab to see personalized pulse zones.</div>
     <div class="pb">
       <button id="pt10" class="on" onclick="setPT('10k')">10 km / Half Marathon<div class="sub">4 days per week</div></button>
@@ -421,7 +421,7 @@ function renderPlan(){
     {n:9,t:'Long Runs',
      txt:'Long runs are a crucial pillar of marathon training. Sunday morning is ideal. These runs accustom the muscles to working for a long time, teach the metabolism to use fewer carbohydrates, and train mental strength.'},
     {n:10,t:'Time or Kilometers?',
-     txt:'For recreational runners it is better to plan training by time rather than kilometers. Otherwise, you will not achieve the recovery necessary for the following sessions — which is just as important as the effort itself.'},
+     txt:'For popular runners it is better to plan training by time rather than kilometers. Otherwise, you will not achieve the recovery necessary for the following sessions — which is just as important as the effort itself.'},
     {n:11,t:'Metabolic Adaptation: Fasted Training',
      txt:'Doing the long run in a fasted state — at 70–72% of maximum HR — improves fat burning and spares glycogen stores. This is key to avoiding the dreaded "wall at km 30".'},
     {n:12,t:'Recovery: Rebuilding for Further Growth',

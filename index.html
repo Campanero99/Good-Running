@@ -165,18 +165,44 @@
       const [isVideoMinimized, setIsVideoMinimized] = React.useState(false);
       const [showMainContent, setShowMainContent] = React.useState(false);
       const videoRef = React.useRef(null);
+      const timerRef = React.useRef(null);
 
       const tabOrder = ['hf', 'plan', 'tempos', 'zeiten', 'empfehlungen'];
 
-      // Timer para minimizar el video después de 10 segundos
-      React.useEffect(() => {
-        if (!showVideo) return;
-        const timer = setTimeout(() => {
+      // Función para detener el video y limpiar el timer
+      const stopVideoAndCleanup = React.useCallback(() => {
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
+        }
+        if (videoRef.current) {
+          videoRef.current.pause();
+        }
+      }, []);
+
+      // Función para minimizar el video
+      const minimizeVideo = React.useCallback(() => {
+        if (!isVideoMinimized && showVideo) {
+          stopVideoAndCleanup();
           setIsVideoMinimized(true);
           setShowMainContent(true);
+        }
+      }, [isVideoMinimized, showVideo, stopVideoAndCleanup]);
+
+      // Timer para minimizar el video después de 10 segundos
+      React.useEffect(() => {
+        if (!showVideo || isVideoMinimized) return;
+        
+        timerRef.current = setTimeout(() => {
+          minimizeVideo();
         }, 10000);
-        return () => clearTimeout(timer);
-      }, [showVideo]);
+        
+        return () => {
+          if (timerRef.current) {
+            clearTimeout(timerRef.current);
+          }
+        };
+      }, [showVideo, isVideoMinimized, minimizeVideo]);
 
       // Auto-rotar tabs mientras el video está en modo intro (antes de mostrar contenido)
       React.useEffect(() => {
@@ -189,25 +215,46 @@
         return () => clearInterval(interval);
       }, [showMainContent, showVideo]);
 
+      // Forzar reproducción automática cuando el video está en pantalla completa
+      React.useEffect(() => {
+        if (videoRef.current && !isVideoMinimized && showVideo) {
+          const playPromise = videoRef.current.play();
+          if (playPromise !== undefined) {
+            playPromise.catch(error => {
+              console.log("Autoplay prevented, user must interact", error);
+              // Mostrar un mensaje sutil o simplemente esperar interacción
+            });
+          }
+        }
+      }, [isVideoMinimized, showVideo]);
+
       const handleTabClick = (id) => {
         setActiveTab(id);
       };
 
       const handleMinimize = () => {
-        setIsVideoMinimized(true);
-        setShowMainContent(true);
+        minimizeVideo();
       };
 
       const handleMaximize = () => {
+        if (timerRef.current) {
+          clearTimeout(timerRef.current);
+          timerRef.current = null;
+        }
         setIsVideoMinimized(false);
         setShowMainContent(false);
+        // Forzar reproducción al maximizar
+        setTimeout(() => {
+          if (videoRef.current) {
+            videoRef.current.play().catch(e => console.log("Play error:", e));
+          }
+        }, 100);
       };
 
       const handleVideoEnded = () => {
-        // Cuando el video termina, también minimizamos y mostramos contenido
+        // Cuando el video termina, minimizamos y mostramos contenido
         if (!isVideoMinimized && showVideo) {
-          setIsVideoMinimized(true);
-          setShowMainContent(true);
+          minimizeVideo();
         }
       };
 
@@ -348,6 +395,7 @@
                     src="corredora-corredor.mp4"
                     autoPlay
                     muted
+                    playsInline
                     controls
                     className="video-full"
                     onEnded={handleVideoEnded}
@@ -887,6 +935,7 @@
                 autoPlay
                 muted
                 loop
+                playsInline
                 className="video-minimized"
                 onClick={handleMaximize}
                 title="Klicken zum Maximieren"

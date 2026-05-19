@@ -35,22 +35,12 @@
       background-color: #c7d2fe;
       color: #3730a3;
     }
-    .video-minimized {
-      position: fixed;
-      bottom: 20px;
-      right: 20px;
-      width: 240px;
-      height: 135px;
-      z-index: 1000;
-      border-radius: 12px;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
-      cursor: pointer;
-      transition: all 0.3s ease;
-      border: 2px solid white;
-    }
-    .video-minimized:hover {
-      transform: scale(1.02);
-      box-shadow: 0 20px 30px -10px rgba(0,0,0,0.4);
+    .video-container {
+      display: flex;
+      justify-content: center;
+      margin: 20px 0;
+      position: relative;
+      animation: fadeIn 0.5s ease-in;
     }
     .video-full {
       width: 100%;
@@ -58,41 +48,21 @@
       border-radius: 12px;
       margin: 0 auto;
       display: block;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
     }
-    .video-container {
-      display: flex;
-      justify-content: center;
-      margin: 20px 0 0 0;
-      position: relative;
+    @keyframes fadeIn {
+      from { opacity: 0; transform: translateY(-10px); }
+      to { opacity: 1; transform: translateY(0); }
     }
-    .minimize-btn {
-      position: absolute;
-      bottom: 12px;
-      right: 12px;
-      background: rgba(0,0,0,0.65);
-      color: #fff;
-      padding: 6px 14px;
-      border-radius: 20px;
-      font-size: 13px;
-      cursor: pointer;
-      user-select: none;
-      backdrop-filter: blur(4px);
-      transition: background 0.2s;
-      z-index: 10;
+    .fade-out {
+      animation: fadeOut 0.5s ease-out forwards;
     }
-    .minimize-btn:hover {
-      background: rgba(0,0,0,0.85);
+    @keyframes fadeOut {
+      from { opacity: 1; transform: scale(1); }
+      to { opacity: 0; transform: scale(0.95); display: none; }
     }
-    .main-content-wrapper {
-      transition: opacity 0.5s ease;
-    }
-    .main-content-hidden {
-      opacity: 0;
-      pointer-events: none;
-    }
-    .main-content-visible {
-      opacity: 1;
-      pointer-events: auto;
+    .main-content {
+      transition: opacity 0.3s ease;
     }
   </style>
 </head>
@@ -162,100 +132,46 @@
       const [zielDistanz, setZielDistanz] = React.useState('10k');
       const [planTyp, setPlanTyp] = React.useState('10k');
       const [showVideo, setShowVideo] = React.useState(true);
-      const [isVideoMinimized, setIsVideoMinimized] = React.useState(false);
-      const [showMainContent, setShowMainContent] = React.useState(false);
+      const [fadeOutVideo, setFadeOutVideo] = React.useState(false);
       const videoRef = React.useRef(null);
       const timerRef = React.useRef(null);
 
       const tabOrder = ['hf', 'plan', 'tempos', 'zeiten', 'empfehlungen'];
 
-      // Función para detener el video y limpiar el timer
-      const stopVideoAndCleanup = React.useCallback(() => {
-        if (timerRef.current) {
-          clearTimeout(timerRef.current);
-          timerRef.current = null;
-        }
-        if (videoRef.current) {
-          videoRef.current.pause();
-        }
-      }, []);
-
-      // Función para minimizar el video
-      const minimizeVideo = React.useCallback(() => {
-        if (!isVideoMinimized && showVideo) {
-          stopVideoAndCleanup();
-          setIsVideoMinimized(true);
-          setShowMainContent(true);
-        }
-      }, [isVideoMinimized, showVideo, stopVideoAndCleanup]);
-
-      // Timer para minimizar el video después de 10 segundos
+      // Función para eliminar el video después de 5-8 segundos
       React.useEffect(() => {
-        if (!showVideo || isVideoMinimized) return;
+        if (!showVideo) return;
+        
+        // Tiempo aleatorio entre 5 y 8 segundos (5000-8000 ms)
+        const duration = Math.floor(Math.random() * (8000 - 5000 + 1) + 5000);
         
         timerRef.current = setTimeout(() => {
-          minimizeVideo();
-        }, 10000);
+          setFadeOutVideo(true);
+          // Esperar a que termine la animación de fadeOut antes de ocultar completamente
+          setTimeout(() => {
+            setShowVideo(false);
+            setFadeOutVideo(false);
+          }, 500);
+        }, duration);
         
         return () => {
           if (timerRef.current) {
             clearTimeout(timerRef.current);
           }
         };
-      }, [showVideo, isVideoMinimized, minimizeVideo]);
+      }, [showVideo]);
 
-      // Auto-rotar tabs mientras el video está en modo intro (antes de mostrar contenido)
+      // Forzar reproducción automática cuando el video está visible
       React.useEffect(() => {
-        if (showMainContent || !showVideo) return;
-        let idx = 0;
-        const interval = setInterval(() => {
-          idx = (idx + 1) % tabOrder.length;
-          setActiveTab(tabOrder[idx]);
-        }, 4000);
-        return () => clearInterval(interval);
-      }, [showMainContent, showVideo]);
-
-      // Forzar reproducción automática cuando el video está en pantalla completa
-      React.useEffect(() => {
-        if (videoRef.current && !isVideoMinimized && showVideo) {
-          const playPromise = videoRef.current.play();
-          if (playPromise !== undefined) {
-            playPromise.catch(error => {
-              console.log("Autoplay prevented, user must interact", error);
-              // Mostrar un mensaje sutil o simplemente esperar interacción
-            });
-          }
+        if (videoRef.current && showVideo && !fadeOutVideo) {
+          videoRef.current.play().catch(error => {
+            console.log("Autoplay prevented, user must interact", error);
+          });
         }
-      }, [isVideoMinimized, showVideo]);
+      }, [showVideo, fadeOutVideo]);
 
       const handleTabClick = (id) => {
         setActiveTab(id);
-      };
-
-      const handleMinimize = () => {
-        minimizeVideo();
-      };
-
-      const handleMaximize = () => {
-        if (timerRef.current) {
-          clearTimeout(timerRef.current);
-          timerRef.current = null;
-        }
-        setIsVideoMinimized(false);
-        setShowMainContent(false);
-        // Forzar reproducción al maximizar
-        setTimeout(() => {
-          if (videoRef.current) {
-            videoRef.current.play().catch(e => console.log("Play error:", e));
-          }
-        }, 100);
-      };
-
-      const handleVideoEnded = () => {
-        // Cuando el video termina, minimizamos y mostramos contenido
-        if (!isVideoMinimized && showVideo) {
-          minimizeVideo();
-        }
       };
 
       const berechneHfZonen = () => {
@@ -386,29 +302,24 @@
               <p className="text-center text-gray-600 text-lg">
                 Professionelles Lauftraining auf der Grundlage von Elite-Erfahrung (Persönliche Bestzeit: 2:19 h Marathon)
               </p>
-              
-              {/* Video integrado debajo del primer cuadro */}
-              {showVideo && !isVideoMinimized && (
-                <div className="video-container">
-                  <video
-                    ref={videoRef}
-                    src="corredora-corredor.mp4"
-                    autoPlay
-                    muted
-                    playsInline
-                    controls
-                    className="video-full"
-                    onEnded={handleVideoEnded}
-                  />
-                  <div className="minimize-btn" onClick={handleMinimize}>
-                    Minimieren →
-                  </div>
-                </div>
-              )}
             </div>
 
-            {/* Contenido principal (tabs y paneles) */}
-            <div className={`main-content-wrapper ${showMainContent ? 'main-content-visible' : 'main-content-hidden'} transition-opacity duration-500`}>
+            {/* Video que se muestra encima del contenido y desaparece automáticamente */}
+            {showVideo && (
+              <div className={`video-container ${fadeOutVideo ? 'fade-out' : ''}`}>
+                <video
+                  ref={videoRef}
+                  src="corredora-corredor.mp4"
+                  autoPlay
+                  muted
+                  playsInline
+                  className="video-full"
+                />
+              </div>
+            )}
+
+            {/* Contenido principal (tabs y paneles) - siempre visible, pero el video está encima temporalmente */}
+            <div className="main-content">
               <div className="bg-white rounded-2xl shadow-xl mb-6 p-2">
                 <div className="flex gap-2 flex-wrap">
                   {[
@@ -926,21 +837,6 @@
                 </div>
               )}
             </div>
-
-            {/* Video minimizado (flotante) */}
-            {showVideo && isVideoMinimized && (
-              <video
-                ref={videoRef}
-                src="corredora-corredor.mp4"
-                autoPlay
-                muted
-                loop
-                playsInline
-                className="video-minimized"
-                onClick={handleMaximize}
-                title="Klicken zum Maximieren"
-              />
-            )}
           </div>
         </div>
       );

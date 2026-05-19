@@ -41,27 +41,28 @@
       right: 20px;
       width: 240px;
       height: 135px;
-      z-index: 50;
+      z-index: 1000;
       border-radius: 12px;
-      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.3);
       cursor: pointer;
       transition: all 0.3s ease;
       border: 2px solid white;
     }
     .video-minimized:hover {
       transform: scale(1.02);
-      box-shadow: 0 20px 30px -10px rgba(0,0,0,0.3);
+      box-shadow: 0 20px 30px -10px rgba(0,0,0,0.4);
     }
     .video-full {
       width: 100%;
       max-width: 560px;
       border-radius: 12px;
       margin: 0 auto;
+      display: block;
     }
     .video-container {
       display: flex;
       justify-content: center;
-      margin: 16px 0;
+      margin: 20px 0 0 0;
       position: relative;
     }
     .minimize-btn {
@@ -82,7 +83,7 @@
     .minimize-btn:hover {
       background: rgba(0,0,0,0.85);
     }
-    .main-content {
+    .main-content-wrapper {
       transition: opacity 0.5s ease;
     }
     .main-content-hidden {
@@ -199,6 +200,7 @@
 
       const handleMaximize = () => {
         setIsVideoMinimized(false);
+        setShowMainContent(false);
       };
 
       const handleVideoEnded = () => {
@@ -329,17 +331,36 @@
       return (
         <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
           <div className="max-w-6xl mx-auto">
-            <div className={`main-content ${showMainContent ? 'main-content-visible' : 'main-content-hidden'} transition-opacity duration-500`}>
-              <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
-                <div className="flex items-center justify-center gap-3 mb-4">
-                  <Activity className="w-12 h-12 text-indigo-600" />
-                  <h1 className="text-4xl font-bold text-gray-800">Besser Laufen</h1>
-                </div>
-                <p className="text-center text-gray-600 text-lg">
-                  Professionelles Lauftraining auf der Grundlage von Elite-Erfahrung (Persönliche Bestzeit: 2:19 h Marathon)
-                </p>
+            <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+              <div className="flex items-center justify-center gap-3 mb-4">
+                <Activity className="w-12 h-12 text-indigo-600" />
+                <h1 className="text-4xl font-bold text-gray-800">Besser Laufen</h1>
               </div>
+              <p className="text-center text-gray-600 text-lg">
+                Professionelles Lauftraining auf der Grundlage von Elite-Erfahrung (Persönliche Bestzeit: 2:19 h Marathon)
+              </p>
+              
+              {/* Video integrado debajo del primer cuadro */}
+              {showVideo && !isVideoMinimized && (
+                <div className="video-container">
+                  <video
+                    ref={videoRef}
+                    src="corredora-corredor.mp4"
+                    autoPlay
+                    muted
+                    controls
+                    className="video-full"
+                    onEnded={handleVideoEnded}
+                  />
+                  <div className="minimize-btn" onClick={handleMinimize}>
+                    Minimieren →
+                  </div>
+                </div>
+              )}
+            </div>
 
+            {/* Contenido principal (tabs y paneles) */}
+            <div className={`main-content-wrapper ${showMainContent ? 'main-content-visible' : 'main-content-hidden'} transition-opacity duration-500`}>
               <div className="bg-white rounded-2xl shadow-xl mb-6 p-2">
                 <div className="flex gap-2 flex-wrap">
                   {[
@@ -749,8 +770,6 @@
                   <h2 className="text-xl md:text-3xl font-bold text-gray-800 mb-3 md:mb-4 text-center">
                     Überlegungen und Empfehlungen zur Marathon-Vorbereitung
                   </h2>
-                  <p className="text-center text-base md:text-lg text-indigo-600 font-semibold mb-6 md:mb-8">
-                  </p>
 
                   <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-4 md:p-6 rounded-xl mb-6 md:mb-8 border-l-4 border-indigo-500">
                     <p className="text-sm md:text-base text-gray-700 leading-relaxed italic">
@@ -837,7 +856,7 @@
                         text: 'Frühstück: Mein Frühstück vor dem Marathon: Kamillentee (Magen bruhigend) und ein Brötchen mit Butter und Honig sowie eine reife Banane – drei Stunden vor dem Start war mein Frühstück vor dem Marathon. Ein 10-15 minutiges lockeres Einlaufen tut auch gut und bereitet die Muskulatur auf die Belastung vor. Und dann, an der Startlinie gehen, jetzt kann der Marathon kommen, Du bist gut vorbereitet und hast das Gefühl, dass sich alles gelohnt hat: jeder gelaufener Kilometer, jeder überwundene Zweifel, jedes frühe Aufstehen, jede Anstrengung, nicht umsonst war. Der Marathon wird nicht nur mit den Beinen gelaufen – er wird auch mit dem Kopf gelaufen … und mit dem Herzen.'
                       },
                     ].map(p => (
-                      <div key={p.n} className="bg-white border-2 border-gray-200 rounded-xl p-4 md:p-6 hovnicht er:shadow-lg transition-shadow">
+                      <div key={p.n} className="bg-white border-2 border-gray-200 rounded-xl p-4 md:p-6 hover:shadow-lg transition-shadow">
                         <h3 className="text-base md:text-lg font-bold text-indigo-700 mb-2 md:mb-3 leading-snug">{p.n}. {p.title}</h3>
                         <p className="text-sm md:text-base text-gray-700 leading-relaxed">{p.text}</p>
                       </div>
@@ -859,24 +878,6 @@
                 </div>
               )}
             </div>
-
-            {/* Video - Full version (se muestra mientras no está minimizado y showVideo es true) */}
-            {showVideo && !isVideoMinimized && (
-              <div className="video-container">
-                <video
-                  ref={videoRef}
-                  src="corredora-corredor.mp4"
-                  autoPlay
-                  muted
-                  controls
-                  className="video-full"
-                  onEnded={handleVideoEnded}
-                />
-                <div className="minimize-btn" onClick={handleMinimize}>
-                  Minimieren →
-                </div>
-              </div>
-            )}
 
             {/* Video minimizado (flotante) */}
             {showVideo && isVideoMinimized && (

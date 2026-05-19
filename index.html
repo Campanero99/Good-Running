@@ -1,460 +1,917 @@
 <!DOCTYPE html>
-<html lang="en">
+<html lang="de">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Run Better</title>
-  <link rel="icon" type="image/png" sizes="180x180" href="icon.png">
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Besser Laufen</title>
+<link rel="icon" type="image/png" sizes="180x180" href="icon.png">
 <link rel="apple-touch-icon" sizes="180x180" href="icon.png">
+<link rel="manifest" href="manifest.json">
+  <script crossorigin src="https://unpkg.com/react@18/umd/react.production.min.js"></script>
+  <script crossorigin src="https://unpkg.com/react-dom@18/umd/react-dom.production.min.js"></script>
+  <script src="https://unpkg.com/@babel/standalone/babel.min.js"></script>
+  <script src="https://cdn.tailwindcss.com"></script>
   <style>
-    * { box-sizing: border-box; margin: 0; padding: 0; }
-    body { font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', sans-serif;
-           background: linear-gradient(135deg, #eff6ff, #eef2ff); min-height: 100vh; padding: 16px; }
-    .container { max-width: 900px; margin: 0 auto; }
-    .header { background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,.1);
-               padding: 32px; margin-bottom: 20px; text-align: center; }
-    .header h1 { font-size: 1.4rem; font-weight: 800; color: #1f2937; margin-bottom: 8px; white-space: nowrap; }
-    .header p  { color: #6b7280; font-size: 1rem; }
-    .runner-icon { font-size: 4rem; display: block; margin: 12px auto; cursor: pointer;
-                   transition: transform .1s; display: inline-block; }
-    .spinning { animation: spin 6s linear infinite; }
-    @keyframes spin { to { transform: rotate(360deg); } }
-    .tabs { background: white; border-radius: 16px; box-shadow: 0 4px 20px rgba(0,0,0,.08);
-             padding: 10px; margin-bottom: 20px; display: flex; gap: 8px; flex-wrap: wrap; }
-    .tab { flex: 1; min-width: 120px; padding: 11px 8px; border-radius: 12px; border: none;
-            font-weight: 600; font-size: .85rem; cursor: pointer; transition: all .2s; }
-    .tab.active  { background: #4f46e5; color: white; box-shadow: 0 4px 12px rgba(79,70,229,.4); }
-    .tab:not(.active) { background: #f3f4f6; color: #4b5563; }
-    .tab:not(.active):hover { background: #e0e7ff; color: #3730a3; }
-    .panel { background: white; border-radius: 20px; box-shadow: 0 10px 40px rgba(0,0,0,.1); padding: 28px; }
-    h2 { font-size: 1.4rem; font-weight: 800; color: #1f2937; margin-bottom: 20px; }
-    h3 { font-size: 1.05rem; font-weight: 700; color: #1f2937; margin-bottom: 12px; }
-    .info { padding: 14px; border-radius: 10px; margin-bottom: 18px; border-left: 4px solid; font-size: .92rem; }
-    .info-y { background:#fefce8; border-color:#facc15; color:#854d0e; }
-    .info-b { background:#eff6ff; border-color:#3b82f6; color:#1e40af; }
-    .info-i { background:#eef2ff; border-color:#6366f1; color:#3730a3; }
-    .g2 { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; margin-bottom: 20px; }
-    .g3 { display: grid; grid-template-columns: 1fr 1fr 1fr; gap: 14px; margin-bottom: 20px; }
-    @media(max-width:600px){ .g2,.g3{ grid-template-columns:1fr; } }
-    .igroup { background:#f9fafb; border-radius:14px; padding:18px; }
-    label { display:block; font-size:.82rem; font-weight:600; color:#374151; margin-bottom:6px; }
-    input[type=number] { width:100%; padding:10px 14px; border:2px solid #d1d5db; border-radius:10px;
-                          font-size:1rem; outline:none; }
-    input[type=number]:focus { border-color:#6366f1; }
-    .irow { display:flex; gap:10px; }
-    .irow > div { flex:1; }
-    .sx { display:flex; gap:8px; margin-bottom:10px; }
-    .sx button { flex:1; padding:9px; border-radius:10px; border:2px solid #d1d5db;
-                  background:white; font-weight:600; font-size:.9rem; cursor:pointer; }
-    .sx .m-on { background:#4f46e5; color:white; border-color:#4f46e5; }
-    .sx .f-on { background:#ec4899; color:white; border-color:#ec4899; }
-    .zone-card { padding:14px; border-radius:12px; border:2px solid; margin-bottom:8px; }
-    .zone-title { font-weight:700; margin-bottom:2px; }
-    .zone-val { font-size:1.3rem; font-weight:800; text-align:right; }
-    .green-c  { background:linear-gradient(to right,#f0fdf4,#dcfce7); border-color:#86efac; color:#14532d; }
-    .blue-c   { background:linear-gradient(to right,#eff6ff,#dbeafe); border-color:#93c5fd; color:#1e3a8a; }
-    .cyan-c   { background:linear-gradient(to right,#ecfeff,#cffafe); border-color:#67e8f9; color:#164e63; }
-    .orange-c { background:linear-gradient(to right,#fff7ed,#ffedd5); border-color:#fdba74; color:#7c2d12; }
-    .red-c    { background:linear-gradient(to right,#fef2f2,#fee2e2); border-color:#fca5a5; color:#7f1d1d; }
-    .purple-c { background:linear-gradient(to right,#faf5ff,#f3e8ff); border-color:#d8b4fe; color:#581c87; }
-    .hr-tbl { border:2px solid #e5e7eb; border-radius:12px; overflow:hidden; margin-top:8px; }
-    .hr-head { display:grid; grid-template-columns:1fr 1fr; background:#2563eb; color:white;
-                font-weight:700; padding:10px; text-align:center; }
-    .hr-body { max-height:320px; overflow-y:auto; }
-    .hr-row  { display:grid; grid-template-columns:1fr 1fr; padding:9px 12px;
-                border-bottom:1px solid #e5e7eb; text-align:center; font-weight:600; }
-    .pred-card { border-radius:14px; padding:22px; color:white; }
-    .pred-card .pt { font-size:.82rem; font-weight:600; opacity:.9; margin-bottom:4px; }
-    .pred-card .pv { font-size:1.9rem; font-weight:800; margin-bottom:2px; }
-    .pred-card .pp { font-size:.88rem; opacity:.9; }
-    .bg-gr { background:linear-gradient(135deg,#16a34a,#22c55e); }
-    .bg-bl { background:linear-gradient(135deg,#2563eb,#3b82f6); }
-    .bg-pu { background:linear-gradient(135deg,#7c3aed,#a855f7); }
-    .pace-card { padding:18px; border-radius:12px; border:2px solid; margin-bottom:10px; }
-    .pc-title { font-weight:700; font-size:1rem; margin-bottom:3px; }
-    .pc-sub   { font-size:.83rem; margin-bottom:6px; }
-    .pc-val   { font-size:1.2rem; font-weight:800; }
-    .indigo-c { background:linear-gradient(to right,#eef2ff,#e0e7ff); border-color:#a5b4fc; color:#312e81; }
-    .pb { display:flex; gap:14px; margin-bottom:20px; flex-wrap:wrap; }
-    .pb button { flex:1; min-width:150px; padding:16px; border-radius:12px; border:none;
-                  cursor:pointer; text-align:center; font-weight:700; font-size:.95rem; }
-    .pb button.on { background:#4f46e5; color:white; box-shadow:0 5px 14px rgba(79,70,229,.4); }
-    .pb button:not(.on) { background:#f3f4f6; color:#374151; }
-    .pb button .sub { font-size:.78rem; font-weight:400; opacity:.75; margin-top:2px; }
-    .day-card { border-radius:12px; padding:18px; color:white; margin-bottom:10px; }
-    .day-day   { font-size:.82rem; opacity:.85; }
-    .day-title { font-size:1.15rem; font-weight:800; margin-top:2px; }
-    .day-bpm   { margin-top:8px; font-size:1rem; }
-    .day-dur   { font-size:.88rem; opacity:.85; margin-top:2px; }
-    .tips { background:#f9fafb; border:2px solid #e5e7eb; border-radius:12px; padding:18px; margin-top:16px; }
-    .tips li { margin-bottom:5px; color:#374151; list-style:none; }
-    .nivel { background:#eef2ff; border:2px solid #a5b4fc; border-radius:12px; padding:20px; margin-top:16px; }
-    .nivel h3 { color:#3730a3; margin-bottom:10px; }
-    .nivel-g { display:grid; grid-template-columns:1fr; gap:10px; }
-    .nivel-item { background:white; border-radius:9px; padding:10px 14px; display:flex; align-items:center; justify-content:space-between; }
-    .nivel-item .lbl { font-size:.82rem; color:#6b7280; }
-    .nivel-item .val { font-size:1.2rem; font-weight:800; color:#4f46e5; }
-    .reco-card { background:white; border:2px solid #e5e7eb; border-radius:12px;
-                  padding:14px 18px; margin-bottom:14px; }
-    .reco-n    { font-size:.9rem; font-weight:700; color:#4f46e5; margin-bottom:3px; }
-    .reco-t    { font-weight:700; color:#1f2937; margin-bottom:7px; }
-    .reco-txt  { color:#4b5563; line-height:1.65; font-size:.92rem; }
-    .reco-scrl { max-height:550px; overflow-y:auto; padding-right:4px; }
-    .epilogue  { background:linear-gradient(to right,#fffbeb,#fef9c3); border:2px solid #fcd34d;
-                  border-radius:12px; padding:24px; text-align:center; margin-top:16px; }
-    .epilogue h3 { color:#78350f; font-size:1.25rem; margin-bottom:10px; }
-    .epilogue p  { color:#374151; line-height:1.7; font-size:.92rem; }
-    .epilogue .auth { color:#4f46e5; font-weight:800; font-size:1.15rem; margin-top:14px; }
-    .age-hint { font-size:.82rem; color:#4f46e5; font-weight:600; margin-top:8px; }
-    .age-hint button { margin-left:6px; background:#4f46e5; color:white; border:none;
-                        padding:2px 8px; border-radius:6px; cursor:pointer; font-size:.78rem; }
+    .rotar {
+      cursor: pointer;
+      transition: transform 0.1s;
+    }
+    .rotar.girando {
+      animation: spin 6s linear infinite;
+    }
+    @keyframes spin {
+      from { transform: rotate(0deg); }
+      to   { transform: rotate(360deg); }
+	}
+    .tab-active {
+      background-color: #6366f1;
+      color: white;
+    }
+    .tab-inactive {
+      background-color: #e5e7eb;
+      color: #374151;
+    }
+    .tab-inactive:hover {
+      background-color: #c7d2fe;
+      color: #3730a3;
+    }
+    .video-minimized {
+      position: fixed;
+      bottom: 20px;
+      right: 20px;
+      width: 240px;
+      height: 135px;
+      z-index: 50;
+      border-radius: 12px;
+      box-shadow: 0 10px 25px -5px rgba(0,0,0,0.2);
+      cursor: pointer;
+      transition: all 0.3s ease;
+      border: 2px solid white;
+    }
+    .video-minimized:hover {
+      transform: scale(1.02);
+      box-shadow: 0 20px 30px -10px rgba(0,0,0,0.3);
+    }
+    .video-full {
+      width: 100%;
+      max-width: 560px;
+      border-radius: 12px;
+      margin: 0 auto;
+    }
+    .video-container {
+      display: flex;
+      justify-content: center;
+      margin: 16px 0;
+      position: relative;
+    }
+    .minimize-btn {
+      position: absolute;
+      bottom: 12px;
+      right: 12px;
+      background: rgba(0,0,0,0.65);
+      color: #fff;
+      padding: 6px 14px;
+      border-radius: 20px;
+      font-size: 13px;
+      cursor: pointer;
+      user-select: none;
+      backdrop-filter: blur(4px);
+      transition: background 0.2s;
+      z-index: 10;
+    }
+    .minimize-btn:hover {
+      background: rgba(0,0,0,0.85);
+    }
+    .main-content {
+      transition: opacity 0.5s ease;
+    }
+    .main-content-hidden {
+      opacity: 0;
+      pointer-events: none;
+    }
+    .main-content-visible {
+      opacity: 1;
+      pointer-events: auto;
+    }
   </style>
 </head>
 <body>
-<div class="container">
+  <div id="root"></div>
+  
+  <script type="text/babel">
+    // Iconos SVG
+    const Activity = (props) => (
+      <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M22 12h-4l-3 9L9 3l-3 9H2"/>
+      </svg>
+    );
+    
+    const Heart = (props) => (
+      <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M19 14c1.49-1.46 3-3.21 3-5.5A5.5 5.5 0 0 0 16.5 3c-1.76 0-3 .5-4.5 2-1.5-1.5-2.74-2-4.5-2A5.5 5.5 0 0 0 2 8.5c0 2.3 1.5 4.05 3 5.5l7 7Z"/>
+      </svg>
+    );
+    
+    const Trophy = (props) => (
+      <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <path d="M6 9H4.5a2.5 2.5 0 0 1 0-5H6"/>
+        <path d="M18 9h1.5a2.5 2.5 0 0 0 0-5H18"/>
+        <path d="M4 22h16"/>
+        <path d="M10 14.66V17c0 .55-.47.98-.97 1.21C7.85 18.75 7 20.24 7 22"/>
+        <path d="M14 14.66V17c0 .55.47.98.97 1.21C16.15 18.75 17 20.24 17 22"/>
+        <path d="M18 2H6v7a6 6 0 0 0 12 0V2Z"/>
+      </svg>
+    );
+    
+    const Target = (props) => (
+      <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <circle cx="12" cy="12" r="6"/>
+        <circle cx="12" cy="12" r="2"/>
+      </svg>
+    );
+    
+    const TrendingUp = (props) => (
+      <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polyline points="22 7 13.5 15.5 8.5 10.5 2 17"/>
+        <polyline points="16 7 22 7 22 13"/>
+      </svg>
+    );
+    
+    const Clock = (props) => (
+      <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <circle cx="12" cy="12" r="10"/>
+        <polyline points="12 6 12 12 16 14"/>
+      </svg>
+    );
+    
+    const Zap = (props) => (
+      <svg {...props} xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round">
+        <polygon points="13 2 3 14 12 14 11 22 21 10 12 10 13 2"/>
+      </svg>
+    );
 
-  <div class="header">
-    <h1>🏃 Run Better</h1>
-    <p>Professional running training based on elite experience &nbsp;·&nbsp; Personal best: 2:19 h Marathon</p>
-    <span class="runner-icon" id="ico" onclick="this.classList.toggle('spinning')" title="Click to spin">🏃</span>
-  </div>
+    const BesserLaufen = () => {
+      const [activeTab, setActiveTab] = React.useState('hf');
+      const [hfMax, setHfMax] = React.useState('');
+      const [alter, setAlter] = React.useState('');
+      const [sexo, setSexo] = React.useState('hombre');
+      const [zeit10k, setZeit10k] = React.useState({ min: '', sek: '' });
+      const [zeitMarathon, setZeitMarathon] = React.useState({ h: '', min: '' });
+      const [zielDistanz, setZielDistanz] = React.useState('10k');
+      const [planTyp, setPlanTyp] = React.useState('10k');
+      const [showVideo, setShowVideo] = React.useState(true);
+      const [isVideoMinimized, setIsVideoMinimized] = React.useState(false);
+      const [showMainContent, setShowMainContent] = React.useState(false);
+      const videoRef = React.useRef(null);
 
-  <div class="tabs">
-    <button class="tab active" onclick="showTab('hf',this)">❤️ HR Zones</button>
-    <button class="tab" onclick="showTab('zeiten',this)">🏆 Prediction</button>
-    <button class="tab" onclick="showTab('tempos',this)">🎯 Paces</button>
-    <button class="tab" onclick="showTab('plan',this)">📋 Training Plan</button>
-    <button class="tab" onclick="showTab('reco',this)">📈 Recommendations</button>
-  </div>
+      const tabOrder = ['hf', 'plan', 'tempos', 'zeiten', 'empfehlungen'];
 
-  <!-- HR ZONES -->
-  <div id="panel-hf" class="panel">
-    <h2>❤️ Heart Rate Zones</h2>
-    <div class="info info-y">💡 <strong>Recommendation:</strong> Do a stress test to determine your actual maximum heart rate.</div>
-    <div class="g2">
-      <div class="igroup">
-        <label>Maximum HR (measured or from a test)</label>
-        <input type="number" id="hfMax" placeholder="e.g. 185" oninput="calcAll()">
-      </div>
-      <div class="igroup">
-        <label>Sex</label>
-        <div class="sx">
-          <button id="bm" class="m-on" onclick="setSex('m')">Male</button>
-          <button id="bf" onclick="setSex('f')">Female</button>
+      // Timer para minimizar el video después de 10 segundos
+      React.useEffect(() => {
+        if (!showVideo) return;
+        const timer = setTimeout(() => {
+          setIsVideoMinimized(true);
+          setShowMainContent(true);
+        }, 10000);
+        return () => clearTimeout(timer);
+      }, [showVideo]);
+
+      // Auto-rotar tabs mientras el video está en modo intro (antes de mostrar contenido)
+      React.useEffect(() => {
+        if (showMainContent || !showVideo) return;
+        let idx = 0;
+        const interval = setInterval(() => {
+          idx = (idx + 1) % tabOrder.length;
+          setActiveTab(tabOrder[idx]);
+        }, 4000);
+        return () => clearInterval(interval);
+      }, [showMainContent, showVideo]);
+
+      const handleTabClick = (id) => {
+        setActiveTab(id);
+      };
+
+      const handleMinimize = () => {
+        setIsVideoMinimized(true);
+        setShowMainContent(true);
+      };
+
+      const handleMaximize = () => {
+        setIsVideoMinimized(false);
+      };
+
+      const handleVideoEnded = () => {
+        // Cuando el video termina, también minimizamos y mostramos contenido
+        if (!isVideoMinimized && showVideo) {
+          setIsVideoMinimized(true);
+          setShowMainContent(true);
+        }
+      };
+
+      const berechneHfZonen = () => {
+        const hf = parseInt(hfMax);
+        if (!hf || hf < 100 || hf > 220) return null;
+        return {
+          erholung: { min: Math.round(hf * 0.50), max: Math.round(hf * 0.68) },
+          zone1: { min: Math.round(hf * 0.68), max: Math.round(hf * 0.72) },
+          zone2: { min: Math.round(hf * 0.77), max: Math.round(hf * 0.79) },
+          zone3: { min: Math.round(hf * 0.80), max: Math.round(hf * 0.84) },
+          zone4: { min: Math.round(hf * 0.85), max: Math.round(hf * 0.88) },
+          wettkampf: { min: Math.round(hf * 0.89), max: Math.round(hf * 0.92) }
+        };
+      };
+
+      const zeitZuSekunden = (h, min, sek) => (h || 0) * 3600 + (min || 0) * 60 + (sek || 0);
+
+      const sekundenZuFormat = (totalSek) => {
+        const h = Math.floor(totalSek / 3600);
+        const min = Math.floor((totalSek % 3600) / 60);
+        const sek = Math.round(totalSek % 60);
+        if (h > 0) return `${h}:${min.toString().padStart(2, '0')}:${sek.toString().padStart(2, '0')}`;
+        return `${min}:${sek.toString().padStart(2, '0')}`;
+      };
+
+      const sekundenZuMinKm = (sekProKm) => {
+        const min = Math.floor(sekProKm / 60);
+        const sek = Math.round(sekProKm % 60);
+        return `${min}:${sek.toString().padStart(2, '0')}`;
+      };
+
+      const vorhersageZeiten = (von, zeit) => {
+        const sek = zeit;
+        let zeiten = {};
+        if (von === '10k') {
+          zeiten['10k'] = sek;
+          zeiten['21k'] = Math.round(sek * 2.182);
+          zeiten['42k'] = Math.round(sek * 4.7);
+        } else if (von === '42k') {
+          zeiten['42k'] = sek;
+          zeiten['21k'] = Math.round(sek / 2.154);
+          zeiten['10k'] = Math.round(sek / 4.7);
+        }
+        return zeiten;
+      };
+
+      const berechneTempos = () => {
+        let tempoMarathon, tempo10k;
+        if (zeit10k.min) {
+          const sek10k = zeitZuSekunden(0, parseInt(zeit10k.min), parseInt(zeit10k.sek || 0));
+          const zeiten = vorhersageZeiten('10k', sek10k);
+          tempoMarathon = zeiten['42k'] / 42.195;
+          tempo10k = sek10k / 10;
+        } else if (zeitMarathon.h || zeitMarathon.min) {
+          const sekMarathon = zeitZuSekunden(parseInt(zeitMarathon.h || 0), parseInt(zeitMarathon.min || 0), 0);
+          const zeiten = vorhersageZeiten('42k', sekMarathon);
+          tempoMarathon = sekMarathon / 42.195;
+          tempo10k = zeiten['10k'] / 10;
+        } else return null;
+
+        return {
+          lockererLauf: { min: tempoMarathon + 60, max: tempoMarathon + 75 },
+          rennTempo: {
+            km: zielDistanz === '10k' ? '5–6 km' : '5–15 km',
+            tempo: zielDistanz === '10k' ? tempo10k : tempoMarathon
+          },
+          intensiverLauf: {
+            tempoMin: zielDistanz === '10k' ? tempo10k + 20 : tempoMarathon + 15,
+            tempoMax: zielDistanz === '10k' ? tempo10k + 30 : tempoMarathon + 20,
+            distanz: zielDistanz === '10k' ? '8–12 km' : '12–15 km'
+          },
+          langerLaufBasic: {
+            dauer: '1:45–2:00 Std.',
+            beschreibung: 'Das ganze Jahr über, wenn du kein Marathonläufer bist',
+            tempoMin: tempo10k + 90,
+            tempoMax: tempo10k + 105
+          },
+          langerLaufMarathon: {
+            dauer: '2:15–3:00 Std.',
+            beschreibung: 'Jede Woche um 10–15 Min. steigern',
+            tempoMin: tempoMarathon + 60,
+            tempoMax: tempoMarathon + 75
+          }
+        };
+      };
+
+      const hfZonen = berechneHfZonen();
+      const tempos = berechneTempos();
+
+      const holeVorhersagen = () => {
+        if (zeit10k.min) {
+          const sek10k = zeitZuSekunden(0, parseInt(zeit10k.min), parseInt(zeit10k.sek || 0));
+          return vorhersageZeiten('10k', sek10k);
+        } else if (zeitMarathon.h || zeitMarathon.min) {
+          const sekMarathon = zeitZuSekunden(parseInt(zeitMarathon.h || 0), parseInt(zeitMarathon.min || 0), 0);
+          return vorhersageZeiten('42k', sekMarathon);
+        }
+        return null;
+      };
+
+      const vorhersagen = holeVorhersagen();
+
+      const getNiveau = () => {
+        if (!vorhersagen) return null;
+        const marathonStunden = vorhersagen['42k'] / 3600;
+        if (marathonStunden < 2.433) return 'elite';
+        if (marathonStunden < 3.083) return 'fortgeschritten';
+        if (marathonStunden < 3.667) return 'mittel';
+        return 'anfänger';
+      };
+
+      const niveau = getNiveau();
+      const empfehlungen = {
+        elite: { kmWoche: '120–160 km', qualitätsTage: '3–4 Tage' },
+        fortgeschritten: { kmWoche: '90–120 km', qualitätsTage: '2–3 Tage' },
+        mittel: { kmWoche: '60–90 km', qualitätsTage: '2 Tage' },
+        anfänger: { kmWoche: '60–80 km', qualitätsTage: '1–2 Tage' }
+      };
+
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-blue-50 to-indigo-100 p-4">
+          <div className="max-w-6xl mx-auto">
+            <div className={`main-content ${showMainContent ? 'main-content-visible' : 'main-content-hidden'} transition-opacity duration-500`}>
+              <div className="bg-white rounded-2xl shadow-xl p-8 mb-6">
+                <div className="flex items-center justify-center gap-3 mb-4">
+                  <Activity className="w-12 h-12 text-indigo-600" />
+                  <h1 className="text-4xl font-bold text-gray-800">Besser Laufen</h1>
+                </div>
+                <p className="text-center text-gray-600 text-lg">
+                  Professionelles Lauftraining auf der Grundlage von Elite-Erfahrung (Persönliche Bestzeit: 2:19 h Marathon)
+                </p>
+              </div>
+
+              <div className="bg-white rounded-2xl shadow-xl mb-6 p-2">
+                <div className="flex gap-2 flex-wrap">
+                  {[
+                    { id: 'hf', icon: <Heart className="w-5 h-5 inline mr-2" />, label: 'HF-Zonen' },
+                    { id: 'plan', icon: <Clock className="w-5 h-5 inline mr-2" />, label: 'Trainingsplan' },
+                    { id: 'tempos', icon: <Target className="w-5 h-5 inline mr-2" />, label: 'Tempi' },
+                    { id: 'zeiten', icon: <Trophy className="w-5 h-5 inline mr-2" />, label: 'Prognose' },
+                    { id: 'empfehlungen', icon: <TrendingUp className="w-5 h-5 inline mr-2" />, label: 'Empfehlungen' },
+                  ].map(tab => (
+                    <button key={tab.id} onClick={() => handleTabClick(tab.id)}
+                      className={`flex-1 min-w-[140px] py-3 px-4 rounded-xl font-semibold transition-all ${activeTab === tab.id ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                      {tab.icon}{tab.label}
+                    </button>
+                  ))}
+                </div>
+              </div>
+
+              {activeTab === 'hf' && (
+                <div className="bg-white rounded-2xl shadow-xl p-8">
+                  <h2 className="text-1xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <Heart className="w-7 h-7 text-red-500" />
+                    Herzfrequenz-Zonen
+                  </h2>
+
+                  <div className="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                    <p className="text-yellow-800 font-semibold">
+                      💡 Empfehlung: Führe einen Belastungstest durch, um deine tatsächliche maximale Herzfrequenz zu ermitteln.
+                    </p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6 mb-6">
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Deine maximale HF (gemessen oder aus einem Test)</label>
+                      <input type="number" value={hfMax} onChange={e => setHfMax(e.target.value)} placeholder="z. B. 185"
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
+                    </div>
+                    <div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Geschlecht</label>
+                      <div className="flex gap-3 mb-3">
+                        <button
+                          onClick={() => setSexo('hombre')}
+                          className={`flex-1 py-2 px-4 rounded-xl font-semibold border-2 transition-colors ${sexo === 'hombre' ? 'bg-indigo-600 text-white border-indigo-600' : 'bg-white text-gray-700 border-gray-300 hover:border-indigo-400'}`}>
+                          Männlich
+                        </button>
+                        <button
+                          onClick={() => setSexo('mujer')}
+                          className={`flex-1 py-2 px-4 rounded-xl font-semibold border-2 transition-colors ${sexo === 'mujer' ? 'bg-pink-500 text-white border-pink-500' : 'bg-white text-gray-700 border-gray-300 hover:border-pink-400'}`}>
+                          Weiblich
+                        </button>
+                      </div>
+                      <label className="block text-sm font-semibold text-gray-700 mb-2">Alter (zur Berechnung der max. HF)</label>
+                      <input type="number" value={alter} onChange={e => setAlter(e.target.value)} placeholder="z. B. 35"
+                        className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
+                      {alter && (
+                        <p className="text-sm text-indigo-600 mt-1 font-medium">
+                          Geschätzte max. HF ({sexo === 'hombre' ? '211 − 0,64 × Alter' : '215 − 0,64 × Alter'}): {sexo === 'hombre' ? Math.round(211 - 0.64 * parseInt(alter)) : Math.round(215 - 0.64 * parseInt(alter))} bpm
+                          <button onClick={() => setHfMax(String(sexo === 'hombre' ? Math.round(211 - 0.64 * parseInt(alter)) : Math.round(215 - 0.64 * parseInt(alter))))}
+                            className="ml-2 text-xs bg-indigo-600 text-white px-2 py-0.5 rounded-lg hover:bg-indigo-700">
+                            Übernehmen
+                          </button>
+                        </p>
+                      )}
+                    </div>
+                  </div>
+
+                  {hfZonen && (
+                    <div className="space-y-3">
+                      <h3 className="text-xl font-bold text-gray-800 mb-4">Deine Trainingszonen:</h3>
+                      {[
+                        { label: 'Erholung', percent: '(<68%)', range: `< ${hfZonen.erholung.max} bpm`, colors: 'from-green-50 to-green-100 border-green-300 text-green-800' },
+                        { label: 'Zone 1', percent: '(68-72%)', range: `${hfZonen.zone1.min}-${hfZonen.zone1.max} bpm`, colors: 'from-blue-50 to-blue-100 border-blue-300 text-blue-800' },
+                        { label: 'Zone 2', percent: '(77-79%)', range: `${hfZonen.zone2.min}-${hfZonen.zone2.max} bpm`, colors: 'from-cyan-50 to-cyan-100 border-cyan-300 text-cyan-800' },
+                        { label: 'Zone 3', percent: '(80-84%)', range: `${hfZonen.zone3.min}-${hfZonen.zone3.max} bpm`, colors: 'from-orange-50 to-orange-100 border-orange-300 text-orange-800' },
+                        { label: 'Zone 4', percent: '(85-88%)', range: `${hfZonen.zone4.min}-${hfZonen.zone4.max} bpm`, colors: 'from-red-50 to-red-100 border-red-300 text-red-800' },
+                        { label: 'Wettkampf-\ntempo', percent: '(89-92%)', range: `${hfZonen.wettkampf.min}-${hfZonen.wettkampf.max} bpm`, colors: 'from-purple-50 to-purple-100 border-purple-300 text-purple-800' },
+                      ].map(z => {
+                        const [c1,c2,c3,c4] = z.colors.split(' ');
+                        return (
+                          <div key={z.label} className={`bg-gradient-to-r ${c1} ${c2} p-4 rounded-xl border-2 ${c3}`}>
+                            <p className={`font-bold ${c4} mb-2 whitespace-pre-line`}>{z.label} {z.percent}</p>
+                            <p className={`text-2xl font-bold ${c4} text-right`}>{z.range}</p>
+                          </div>
+                        );
+                      })}
+                    </div>
+                  )}
+
+                  {hfZonen && (
+                    <div className="mt-8">
+                      <h3 className="text-xl font-bold text-gray-800 mb-4">Vollständige Herzfrequenztabelle:</h3>
+                      <div className="bg-white border-2 border-gray-200 rounded-xl overflow-hidden">
+                        <div className="grid grid-cols-2 bg-blue-600 text-white font-bold p-3">
+                          <div className="text-center text-sm">Intensität</div>
+                          <div className="text-center text-sm">Herzfrequenz</div>
+                        </div>
+                        <div className="max-h-96 overflow-y-auto">
+                          {Array.from({ length: 36 }, (_, i) => {
+                            const prozent = 65 + i;
+                            const frequenz = Math.round(parseInt(hfMax) * (prozent / 100));
+                            return (
+                              <div key={prozent} className={`grid grid-cols-2 p-3 border-b border-gray-200 ${i % 2 === 0 ? 'bg-gray-50' : 'bg-white'}`}>
+                                <div className="text-center text-blue-700 font-bold text-base">{prozent} %</div>
+                                <div className="text-center text-blue-900 font-bold text-base">{frequenz}</div>
+                              </div>
+                            );
+                          })}
+                          <div className="grid grid-cols-2 p-3 bg-blue-100 border-t-2 border-blue-300">
+                            <div className="text-center text-blue-800 font-bold text-base">Max %</div>
+                            <div className="text-center text-blue-900 font-bold text-base">{hfMax}</div>
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'zeiten' && (
+                <div className="bg-white rounded-2xl shadow-xl p-8">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <Trophy className="w-7 h-7 text-yellow-500" />
+                    Zeitenprognose
+                  </h2>
+
+                  <div className="mb-6 bg-blue-50 border-l-4 border-blue-400 p-4 rounded">
+                    <p className="text-blue-800">
+                      <strong>Gib deine Bestzeit ein</strong> über 10 km oder Marathon, um deine Zeiten für andere Distanzen vorherzusagen.
+                    </p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-8 mb-6">
+                    <div className="bg-gray-50 p-6 rounded-xl">
+                      <h3 className="font-bold text-base text-gray-800 mb-4">Deine 10-km-Zeit</h3>
+                      <div className="flex gap-3">
+                        <div className="flex-1">
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">Minuten</label>
+                          <input type="number" value={zeit10k.min}
+                            onChange={e => { setZeit10k({ ...zeit10k, min: e.target.value }); setZeitMarathon({ h: '', min: '' }); }}
+                            placeholder="40" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">Sekunden</label>
+                          <input type="number" value={zeit10k.sek} onChange={e => setZeit10k({ ...zeit10k, sek: e.target.value })}
+                            placeholder="00" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-6 rounded-xl">
+                      <h3 className="font-bold text-base text-gray-800 mb-4">Deine Marathon-Zeit</h3>
+                      <div className="flex gap-3">
+                        <div className="flex-1">
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">Stunden</label>
+                          <input type="number" value={zeitMarathon.h}
+                            onChange={e => { setZeitMarathon({ ...zeitMarathon, h: e.target.value }); setZeit10k({ min: '', sek: '' }); }}
+                            placeholder="3" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">Minuten</label>
+                          <input type="number" value={zeitMarathon.min} onChange={e => setZeitMarathon({ ...zeitMarathon, min: e.target.value })}
+                            placeholder="30" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  {vorhersagen && (
+                    <div>
+                      <h3 className="text-xl font-bold text-gray-800 mb-4">Deine vorhergesagten Zeiten:</h3>
+                      <div className="grid md:grid-cols-3 gap-4">
+                        {[
+                          { label: '10 Kilometer', key: '10k', dist: 10, color: 'from-green-500 to-green-600' },
+                          { label: 'Halbmarathon', key: '21k', dist: 21.097, color: 'from-blue-500 to-blue-600' },
+                          { label: 'Marathon', key: '42k', dist: 42.195, color: 'from-purple-500 to-purple-600' },
+                        ].map(d => (
+                          <div key={d.key} className={`bg-gradient-to-br ${d.color} p-6 rounded-xl text-white shadow-lg`}>
+                            <p className="text-sm font-semibold mb-2 opacity-90">{d.label}</p>
+                            <p className="text-3xl font-bold mb-2">{sekundenZuFormat(vorhersagen[d.key])}</p>
+                            <p className="text-base opacity-90">Tempo: {sekundenZuMinKm(vorhersagen[d.key] / d.dist)} min/km</p>
+                          </div>
+                        ))}
+                      </div>
+
+                      {niveau && (
+                        <div className="mt-6 bg-indigo-50 border-2 border-indigo-300 p-6 rounded-xl">
+                          <h4 className="font-bold text-indigo-900 text-lg mb-3 flex items-center gap-2">
+                            <TrendingUp className="w-5 h-5" />
+                            Empfehlungen für dein Niveau ({niveau.charAt(0).toUpperCase() + niveau.slice(1)})
+                          </h4>
+                          <div className="grid md:grid-cols-2 gap-4">
+                            <div className="bg-white p-4 rounded-lg">
+                              <p className="text-sm text-gray-600 mb-1">Kilometer pro Woche</p>
+                              <p className="text-2xl font-bold text-indigo-600">{empfehlungen[niveau].kmWoche}</p>
+                            </div>
+                            <div className="bg-white p-4 rounded-lg">
+                              <p className="text-sm text-gray-600 mb-1">Qualitätstage</p>
+                              <p className="text-2xl font-bold text-indigo-600">{empfehlungen[niveau].qualitätsTage}</p>
+                            </div>
+                          </div>
+                        </div>
+                      )}
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'tempos' && (
+                <div className="bg-white rounded-2xl shadow-xl p-8">
+                  <h2 className="text-2xl font-bold text-gray-800 mb-6 flex items-center gap-2">
+                    <Target className="w-7 h-7 text-indigo-500" />
+                    Trainingstempos
+                  </h2>
+
+                  <div className="mb-6 bg-indigo-50 border-l-4 border-indigo-400 p-4 rounded">
+                    <p className="text-indigo-800">
+                      <strong>Gib deine Zeit ein</strong> und wähle dein Ziel, um personalisierte Tempos zu erhalten.
+                    </p>
+                  </div>
+
+                  <div className="grid md:grid-cols-2 gap-6 mb-6">
+                    <div className="bg-gray-50 p-6 rounded-xl">
+                      <h3 className="font-bold text-lg text-gray-800 mb-4">Deine 10-km-Zeit</h3>
+                      <div className="flex gap-3">
+                        <div className="flex-1">
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">Minuten</label>
+                          <input type="number" value={zeit10k.min}
+                            onChange={e => { setZeit10k({ ...zeit10k, min: e.target.value }); setZeitMarathon({ h: '', min: '' }); }}
+                            placeholder="40" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">Sekunden</label>
+                          <input type="number" value={zeit10k.sek} onChange={e => setZeit10k({ ...zeit10k, sek: e.target.value })}
+                            placeholder="00" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
+                        </div>
+                      </div>
+                    </div>
+
+                    <div className="bg-gray-50 p-6 rounded-xl">
+                      <h3 className="font-bold text-lg text-gray-800 mb-4">Deine Marathon-Zeit</h3>
+                      <div className="flex gap-3">
+                        <div className="flex-1">
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">Stunden</label>
+                          <input type="number" value={zeitMarathon.h}
+                            onChange={e => { setZeitMarathon({ ...zeitMarathon, h: e.target.value }); setZeit10k({ min: '', sek: '' }); }}
+                            placeholder="3" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
+                        </div>
+                        <div className="flex-1">
+                          <label className="block text-sm font-semibold text-gray-700 mb-2">Minuten</label>
+                          <input type="number" value={zeitMarathon.min} onChange={e => setZeitMarathon({ ...zeitMarathon, min: e.target.value })}
+                            placeholder="30" className="w-full px-4 py-3 border-2 border-gray-300 rounded-xl focus:border-indigo-500 focus:outline-none text-lg" />
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+
+                  <div className="mb-6">
+                    <label className="block text-sm font-semibold text-gray-700 mb-3">Worauf bereitest du dich vor?</label>
+                    <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center">
+                      {[['10k','10 km / Halbmarathon'],['maraton','Marathon']].map(([val,lbl]) => (
+                        <button key={val} onClick={() => setZielDistanz(val)}
+                          className={`flex-1 py-3 px-6 rounded-xl font-semibold transition-all ${zielDistanz === val ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-100 text-gray-600 hover:bg-gray-200'}`}>
+                          {lbl}
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {tempos && (
+                    <div className="space-y-4">
+                      <h3 className="text-xl font-bold text-gray-800 mb-4">Deine Trainingstempos:</h3>
+
+                      <div className="bg-gradient-to-r from-green-50 to-green-100 p-5 rounded-xl border-2 border-green-300">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Clock className="w-6 h-6 text-green-700" />
+                          <h4 className="font-bold text-green-900 text-lg">Lockerer Lauf</h4>
+                        </div>
+                        <p className="text-sm text-green-700 mb-2">Aerobe Basis – 70–80 % deines Trainings</p>
+                        <p className="text-xl font-bold text-green-800 whitespace-nowrap">
+                          {sekundenZuMinKm(tempos.lockererLauf.min)} – {sekundenZuMinKm(tempos.lockererLauf.max)} Min/km
+                        </p>
+                      </div>
+
+                      <div className="bg-gradient-to-r from-orange-50 to-orange-100 p-5 rounded-xl border-2 border-orange-300">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Zap className="w-6 h-6 text-orange-700" />
+                          <h4 className="font-bold text-orange-900 text-lg">Renntempo</h4>
+                        </div>
+                        <p className="text-sm text-orange-700 mb-2">Lauf über {tempos.rennTempo.km}</p>
+                        <p className="text-xl font-bold text-orange-800 whitespace-nowrap">{sekundenZuMinKm(tempos.rennTempo.tempo)} Min/km</p>
+                      </div>
+
+                      <div className="bg-gradient-to-r from-red-50 to-red-100 p-5 rounded-xl border-2 border-red-300">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Target className="w-6 h-6 text-red-700" />
+                          <h4 className="font-bold text-red-900 text-lg">Intensiver Lauf</h4>
+                        </div>
+                        <p className="text-sm text-red-700 mb-2">Distanz: {tempos.intensiverLauf.distanz}</p>
+                        <p className="text-xl font-bold text-red-800 whitespace-nowrap">
+                          {sekundenZuMinKm(tempos.intensiverLauf.tempoMin)} – {sekundenZuMinKm(tempos.intensiverLauf.tempoMax)} Min/km
+                        </p>
+                      </div>
+
+                      <div className="bg-gradient-to-r from-blue-50 to-blue-100 p-5 rounded-xl border-2 border-blue-300">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Activity className="w-6 h-6 text-blue-700" />
+                          <h4 className="font-bold text-blue-900 text-lg">Langer Lauf (Grundlage)</h4>
+                        </div>
+                        <p className="text-sm text-blue-700 mb-1">{tempos.langerLaufBasic.dauer}</p>
+                        <p className="text-sm text-blue-600 italic mb-2">{tempos.langerLaufBasic.beschreibung}</p>
+                        <p className="text-xl font-bold text-blue-800 whitespace-nowrap">
+                          {sekundenZuMinKm(tempos.langerLaufBasic.tempoMin)} – {sekundenZuMinKm(tempos.langerLaufBasic.tempoMax)} Min/km
+                        </p>
+                      </div>
+
+                      <div className="bg-gradient-to-r from-indigo-50 to-indigo-100 p-5 rounded-xl border-2 border-indigo-300">
+                        <div className="flex items-center gap-3 mb-2">
+                          <Activity className="w-6 h-6 text-indigo-700" />
+                          <h4 className="font-bold text-indigo-900 text-lg">Langer Lauf für den Marathon</h4>
+                        </div>
+                        <p className="text-sm text-indigo-700 mb-1">{tempos.langerLaufMarathon.dauer}</p>
+                        <p className="text-sm text-indigo-600 italic mb-2">{tempos.langerLaufMarathon.beschreibung}</p>
+                        <p className="text-xl font-bold text-indigo-800 whitespace-nowrap">
+                          {sekundenZuMinKm(tempos.langerLaufMarathon.tempoMin)} – {sekundenZuMinKm(tempos.langerLaufMarathon.tempoMax)} Min/km
+                        </p>
+                      </div>
+
+                      <div className="mt-6 bg-gray-50 p-5 rounded-xl border-2 border-gray-200">
+                        <h4 className="font-bold text-gray-800 mb-3">📋 Trainingstipps:</h4>
+                        <ul className="space-y-2 text-gray-700">
+                          <li>• Der größte Teil der Kilometer sollte in lockerem Tempo absolviert werden.</li>
+                          <li>• 1–2 Qualitätseinheiten pro Woche einplanen.</li>
+                          <li>• Ausreichend zwischen den harten Einheiten erholen.</li>
+                          <li>• Den Umfang schrittweise steigern (10-Prozent-Regel).</li>
+                        </ul>
+                      </div>
+                    </div>
+                  )}
+                </div>
+              )}
+
+              {activeTab === 'plan' && (() => {
+                const hf = parseInt(hfMax);
+                const hfOk = hf && hf >= 100 && hf <= 220;
+                const z1min = hfOk ? Math.round(hf * 0.70) : null;
+                const z1max = hfOk ? Math.round(hf * 0.73) : null;
+                const z2    = hfOk ? Math.round(hf * 0.77) : null;
+                const z3min = hfOk ? Math.round(hf * 0.82) : null;
+                const z3max = hfOk ? Math.round(hf * 0.84) : null;
+                const z4min = hfOk ? Math.round(hf * 0.88) : null;
+                const z4max = hfOk ? Math.round(hf * 0.92) : null;
+                const ppm = (min, max) => min ? `${min}–${max} bpm` : '—';
+                const days10k = [
+                  { day: 'Dienstag', title: 'Intensiver Lauf', color: 'bg-blue-500', ppm: ppm(z3min, z3max), pct: '(82–84 %)', dauer: '40–50 Min.' },
+                  { day: 'Donnerstag', title: 'Lockerer Lauf', color: 'bg-green-500', ppm: ppm(z1min, z1max), pct: '(70–73 %)', dauer: '40–60 Min.' },
+                  { day: 'Samstag', title: 'Renntempo', color: 'bg-red-500', ppm: ppm(z4min, z4max), pct: '(88–92 %)', dauer: '30–40 Min.' },
+                  { day: 'Sonntag', title: 'Langer Lauf', color: 'bg-green-500', ppm: ppm(z1min, z1max), pct: '(70–73 %)', dauer: '1:30–2:00 Std.' },
+                ];
+                const daysMarathon = [
+                  { day: 'Dienstag', title: 'Intensiver Lauf', color: 'bg-blue-500', ppm: ppm(z3min, z3max), pct: '(82–84 %)', dauer: '50–60 Min.' },
+                  { day: 'Mittwoch', title: 'Lockerer Lauf', color: 'bg-yellow-500', ppm: ppm (z1min, z1max), pct: '(70-73 %)', dauer: '1:30–1:40 Std.' },
+                  { day: 'Donnerstag', title: 'Lockerer Lauf', color: 'bg-green-500', ppm: z2 ? `${z2} bpm` : '—', pct: '(77 %)', dauer: '45–60 Min.' },
+                  { day: 'Samstag', title: 'Renntempo', color: 'bg-red-500', ppm: ppm(z4min, z4max), pct: '(88–92 %)', dauer: '40–50 Min.' },
+                  { day: 'Sonntag', title: 'Langer Lauf', color: 'bg-green-500', ppm: ppm(z1min, z1max), pct: '(70–73 %)', dauer: '2:15 Std.–3:00 Std.' },
+                ];
+                const activeDays = planTyp === '10k' ? days10k : daysMarathon;
+                return (
+                  <div className="bg-white rounded-2xl shadow-xl p-8">
+                    <h2 className="text-xl font-bold text-gray-800 mb-6">
+                      Trainingsplan / Woche
+                    </h2>
+
+                    {!hfOk && (
+                      <div className="mb-6 bg-yellow-50 border-l-4 border-yellow-400 p-4 rounded">
+                        <p className="text-yellow-800 font-semibold">
+                          ⚠️ Gib deine maximale Herzfrequenz im Tab <em>HF-Zonen</em> ein, um persönliche Pulsbereiche zu sehen.
+                        </p>
+                      </div>
+                    )}
+
+                    <div className="flex flex-col sm:flex-row gap-4 mb-6 justify-center">
+                      {[['10k', '10 km / Halbmarathon', '4 Tage pro Woche'], ['marathon', 'Marathon', '5 Tage pro Woche']].map(([val, lbl, sub]) => (
+                        <button key={val} onClick={() => setPlanTyp(val)}
+                          className={`flex-1 p-5 rounded-xl text-center transition-all ${planTyp === val ? 'bg-indigo-600 text-white shadow-lg' : 'bg-gray-100 text-gray-700 hover:bg-gray-200'}`}>
+                          <div className="text-sm font-bold leading-tight">{lbl}</div>
+                          <div className="text-sm mt-1 opacity-80">{sub}</div>
+                        </button>
+                      ))}
+                    </div>
+
+                    <h3 className="text-base font-bold text-gray-800 mb-4">Dein persönlicher Plan:</h3>
+                    <div className="space-y-4">
+                      {activeDays.map((d, i) => (
+                        <div key={i} className={`${d.color} text-white p-5 rounded-xl`}>
+                          <div className="text-sm mb-1 opacity-90">{d.day}</div>
+                          <div className="text-xl font-bold">{d.title}</div>
+                          <div className="text-lg mt-2">{d.ppm}<br />{d.pct}</div>
+                          <div className="mt-1 opacity-90">{d.dauer}</div>
+                        </div>
+                      ))}
+                    </div>
+                  </div>
+                );
+              })()}
+
+              {activeTab === 'empfehlungen' && (
+                <div className="bg-white rounded-2xl shadow-xl p-4 md:p-8">
+                  <h2 className="text-xl md:text-3xl font-bold text-gray-800 mb-3 md:mb-4 text-center">
+                    Überlegungen und Empfehlungen zur Marathon-Vorbereitung
+                  </h2>
+                  <p className="text-center text-base md:text-lg text-indigo-600 font-semibold mb-6 md:mb-8">
+                  </p>
+
+                  <div className="bg-gradient-to-r from-indigo-50 to-blue-50 p-4 md:p-6 rounded-xl mb-6 md:mb-8 border-l-4 border-indigo-500">
+                    <p className="text-sm md:text-base text-gray-700 leading-relaxed italic">
+                      Einen Marathon zu laufen bedeutet nicht nur, 42,195 Kilometer zurückzulegen: Es ist ein physiologischer, mentaler und emotionaler Transformationsprozess, der bei jedem, der ihn erlebt, tiefe Spuren hinterlässt. In über 45 Jahren Laufsport, mit 28 absolvierten Marathons und einer persönlichen Bestzeit unter 2:19 h, habe ich gelernt, dass der Erfolg auf dieser Distanz aus der genauen Kombination von Wissenschaft, Beständigkeit und Leidenschaft entsteht. Diese Zeilen enthalten technische und persönliche Überlegungen, die dir helfen sollen, deinen Marathon mit Herz und Respekt vor der Distanz vorzubereiten.
+                    </p>
+                  </div>
+
+                  <div className="space-y-4 md:space-y-6 max-h-[500px] md:max-h-[600px] overflow-y-auto pr-2 md:pr-4">
+                    {[
+                      {
+                        n: '1', title: 'Die Entscheidung: Warum ein Marathon?',
+                        text: 'Der Marathon liegt im Trend, ist aber keine bloße Mode. Er ist eine ernsthafte Entscheidung, die läuferische Reife erfordert. Bevor man ihn in Angriff nimmt, ist es ratsam, mindestens zwei Jahre regelmäßig zu laufen und an 10-km- und Halbmarathon-Wettkämpfen teilgenommen zu haben. Die Vorbereitung auf den Marathon wird deinen Alltag verändern. Training und Erholung brauchen ihren Platz. Es ist kein Verzicht - sondern ein Traum, der sich erfüllt und dich als Läufer und als Mensch wachsen lässt.'
+                      },
+                      {
+                        n: '2', title: 'Gesundheit',
+                        text: 'Bevor du mit der Vorbereitung beginnst, solltest Du eine ärztliche Untersuchung durchführen. Eine Blutuntersuchung, Elektrokardiogramm, und ein Belastungstest sind eine gute Basis und empfehlenswert für das Marathontraining. Gesundheit ist nicht verhandelbar: Ohne sie gibt es keine Leistung, keinen Genuss und keinen Marathon.'
+                      },
+                      {
+                        n: '3', title: 'Planung: Wochen und Struktur',
+                        text: '8 bis 11 Wochen spezifisches Training sind eine gute Grundlage für einen Marathon. Der Schlüssel liegt in der Progression: Umfang und Intensität kontrolliert steigern und dabei die Prinzipien von Belastung, Erholung und Anpassung beachten.'
+                      },
+                      {
+                        n: '4', title: 'Trainingsumgebung: Ort und Gemeinschaft',
+                        text: 'Trainiere auf vertrauten Strecken in der Nähe deines Zuhauses, die Logistik und Kontrolle des Trainings erleichtern. Trainiere wann immer möglich in Begleitung: Die Gruppe gibt an schwierigen Tagen Halt und vervielfacht die Motivation. Der Marathon wird allein gelaufen, aber besser im Team vorbereitet.'
+                      },
+                      {
+                        n: '5', title: 'Realistisches Ziel: Viel mehr als eine Zeit',
+                        text: 'Beim ersten Marathon ist das Hauptziel, zu finishen. Die Zeit ergibt sich als Folge guter Arbeit. Die Ziellinie zum ersten Mal zu überqueren ist eine kaum zu beschreibende emotionale Erfahrung: Tränen, Stolz, innere Stille und die tiefe Gewissheit, alles gegeben zu haben.'
+                      },
+                      {
+                        n: '6', title: 'Trainingsmethodik',
+                        text: 'Kombiniere drei grundlegende Säulen: aerobes Volumen (lockere und lange Läufe) zum zu Aufbau der physiologischen Basis; Marathontempo zur Optimierung der Laufökonomie und Gewöhnung an die spezifische Belastung; sowie Qualitätsarbeit (Tempowechsel, intensive Läufe, Steigerungen), zur Verbesserung der VO₂max und der aeroben Schwelle.'
+                      },
+                      {
+                        n: '7', title: 'Tempos und Wochenumfang',
+                        text: 'Hobbyläufer sollten zwischen 60 und 70 km pro Woche laufen, angepasst an ihr Niveau. Die Tempos sollten überwiegend aerob sein (Zone 2–3), denn dort wird die eigentliche Ausdauer aufgebaut. Langsam zu trainieren ist keine Zeitverschwendung – es ist eine Investition in die Zukunft.'
+                      },
+                      {
+                        n: '8', title: 'Intensitätskontrolle: Pulsmesser und Körpergefühl',
+                        text: 'Die eigene maximale Herzfrequenz und aerobe Schwelle zu kennen, ermöglicht präzises Training. Technologie ist hilfreich, aber vergiss nicht, auf deinen Körper zu hören: Erholung und Stimmung sind ebenfalls wichtig.'
+                      },
+                      {
+                        n: '9', title: 'Lange Läufe: Grundlagen des Marathon',
+                        text: 'Die langen Läufe sind eine wichtige Säule des Marathon-Training. Sonntagsmorgen ist ideal um den langen Lauf zu absolvieren. Mit den langen Läufen wird die Muskulatur daran gewöhnt lange und ohne Unterbrechung zu arbeiten, der Stoffwechsel lernt, mit weniger Kohlenhydrate auszukommen und die mentale Stärke wird trainiert.'
+                      },
+                      {
+                        n: '10', title: 'Zeit oder Kilometer?',
+                        text: ' Während Profi-Läufer ihr Training in Kilometern planen, ist dies für Freizeitläufer nicht besonders empfehlenswert. Profis können im Training 20 km in 1 Stunde und 30–35 km in 2:00–2:15 Stunden laufen, während Freizeitläufer für diese Distanz unter Umständen doppelt so lange brauchen. Aus diesem Grund ist es für Hobbyläufer nicht ratsam, sich an Kilometern zu orientieren, sondern an der Zeit, die sie trainieren möchten. Andernfalls wird die für die nächsten Trainingstage notwendige Erholung nicht erreicht, die genauso wichtig ist wie das Training selbst.'
+                      },
+                      {
+                        n: '11', title: 'Metabolische Anpassung: Nüchterntraining',
+                        text: 'Den langen Lauf nüchtern zu absolvieren – bei 70–72 % der maximalen HF – verbessert die Fettverbrennung und schont die Glykogenspeicher. Dieser Prozess ist entscheidend, um die gefürchtete „Mauer bei km 30" zu vermeiden. Es ist physiologisches Training … und auch eine Übung im Vertrauen auf den eigenen Körper.'
+                      },
+                      {
+                        n: '12', title: 'Erholung: Wiederaufbau für weiteres Wachstum',
+                        text: 'Ohne Erholung findet keine Anpassung statt. Nach dem langen Lauf Kohlenhydrate und hochwertige Proteine auffüllen: Haferflocken, reifes Obst, gekochte Kartoffeln, Vollkornreis. Jede Mahlzeit ist eine Gelegenheit, Körper und Motivation wieder aufzubauen.'
+                      },
+                      {
+                        n: '13', title: 'Bewusste Ernährung',
+                        text: 'Eine Ernährung auf Basis echter Lebensmittel – Gemüse, Obst, Hülsenfrüchte, Vollkornprodukte und native Öle – ist die beste natürliche Unterstützung. Industriellen Zucker reduzieren: weniger Blutzuckerspitzen, mehr Energie- und emotionale Stabilität.'
+                      },
+                      {
+                        n: '14', title: 'Mahlzeiten und metabolische Effizienz',
+                        text: '2–3 Mahlzeiten pro Tag fördern die metabolische Flexibilität, verbessern die Fettverbrennung und entlasten das Verdauungssystem. Ein gut ausgeruhtes Verdauungssystem stellt mehr Energie für Training und Erholung bereit.'
+                      },
+                      {
+                        n: '15', title: 'Wettkampftempo: Vertrauen aufbauen',
+                        text: 'Trainiere einmal pro Woche im Marathontempo. Beginne mit 5 km und steigere dich auf 12–15 km. Du trainierst nicht nur den Körper – du trainierst auch die Gewissheit, dass du dieses Tempo halten kannst, wenn es darauf ankommt.'
+                      },
+                      {
+                        n: '16', title: 'Wettkämpfe als physiologischer und emotionaler Test',
+                        text: '10–15 km im Marathontempo oder einen Halbmarathon vier Wochen vor dem Marathon zu laufen, ist ein ausgezeichneter Test. Er dient dazu, die Form zu überprüfen, Material zu testen und sich zu vergewissern, dass der Traum erreichbar ist.'
+                      },
+                      {
+                        n: '17', title: 'Methode: Wirksame Einfachheit',
+                        text: '2–3-mal pro Woche 70–80 Minuten zu laufen, 20–25 Sekunden langsamer als das Marathontempo, baut eine solide Ausdauer auf. Dieses Training ist anspruchsvoll und äußerst wirksam.'
+                      },
+                      {
+                        n: '18', title: 'Schuhe: Vertrauen unter den Füßen',
+                        text: 'Die Schuhe sollten eine Verlängerung des eigenen Körpers sein. Sie werden am Wettkampftag niemals zum ersten Mal getragen. Verwende sie während der gesamten Vorbereitung bei Tempoläufen: Auch Vertrauen will trainiert sein.'
+                      },
+                      {
+                        n: '19', title: 'Der Wettkampftag: Wissenschaft und Emotion',
+                        text: 'Frühstück: Mein Frühstück vor dem Marathon: Kamillentee (Magen bruhigend) und ein Brötchen mit Butter und Honig sowie eine reife Banane – drei Stunden vor dem Start war mein Frühstück vor dem Marathon. Ein 10-15 minutiges lockeres Einlaufen tut auch gut und bereitet die Muskulatur auf die Belastung vor. Und dann, an der Startlinie gehen, jetzt kann der Marathon kommen, Du bist gut vorbereitet und hast das Gefühl, dass sich alles gelohnt hat: jeder gelaufener Kilometer, jeder überwundene Zweifel, jedes frühe Aufstehen, jede Anstrengung, nicht umsonst war. Der Marathon wird nicht nur mit den Beinen gelaufen – er wird auch mit dem Kopf gelaufen … und mit dem Herzen.'
+                      },
+                    ].map(p => (
+                      <div key={p.n} className="bg-white border-2 border-gray-200 rounded-xl p-4 md:p-6 hovnicht er:shadow-lg transition-shadow">
+                        <h3 className="text-base md:text-lg font-bold text-indigo-700 mb-2 md:mb-3 leading-snug">{p.n}. {p.title}</h3>
+                        <p className="text-sm md:text-base text-gray-700 leading-relaxed">{p.text}</p>
+                      </div>
+                    ))}
+
+                    <div className="bg-gradient-to-r from-amber-50 to-yellow-50 p-4 md:p-8 rounded-xl border-2 border-amber-300">
+                      <h3 className="text-xl md:text-2xl font-bold text-amber-900 mb-3 md:mb-4 text-center">Epilog</h3>
+                      <p className="text-sm md:text-base text-gray-700 leading-relaxed text-center">
+                        Diese Überlegungen entstammen einem dem Laufsport gewidmeten Leben und dem Glück, Erfahrungen mit großartigen Athleten wie Andrés Espinosa oder Julio Rey geteilt zu haben. Von ihnen habe ich gelernt, dass der Marathon ein physiologisches und emotionales Kunstwerk ist: Präzision, Bescheidenheit und Leidenschaft.
+                      </p>
+                      <p className="text-sm md:text-base text-gray-700 leading-relaxed text-center mt-3 md:mt-4 font-semibold">
+                        Wenn diese Zeilen dich bei deiner Vorbereitung begleiten, ist das Ziel bereits erreicht.
+                      </p>
+                      <p className="text-center text-lg md:text-xl font-bold text-indigo-700 mt-4 md:mt-6">
+                        Manolo
+                      </p>
+                    </div>
+                  </div>
+                </div>
+              )}
+            </div>
+
+            {/* Video - Full version (se muestra mientras no está minimizado y showVideo es true) */}
+            {showVideo && !isVideoMinimized && (
+              <div className="video-container">
+                <video
+                  ref={videoRef}
+                  src="corredora-corredor.mp4"
+                  autoPlay
+                  muted
+                  controls
+                  className="video-full"
+                  onEnded={handleVideoEnded}
+                />
+                <div className="minimize-btn" onClick={handleMinimize}>
+                  Minimieren →
+                </div>
+              </div>
+            )}
+
+            {/* Video minimizado (flotante) */}
+            {showVideo && isVideoMinimized && (
+              <video
+                ref={videoRef}
+                src="corredora-corredor.mp4"
+                autoPlay
+                muted
+                loop
+                className="video-minimized"
+                onClick={handleMaximize}
+                title="Klicken zum Maximieren"
+              />
+            )}
+          </div>
         </div>
-        <label>Age (for max HR estimation)</label>
-        <input type="number" id="age" placeholder="e.g. 35" oninput="calcAge()">
-        <div id="ageHint" class="age-hint"></div>
-      </div>
-    </div>
-    <div id="hfOut"></div>
-  </div>
+      );
+    };
 
-  <!-- PREDICTION -->
-  <div id="panel-zeiten" class="panel" style="display:none">
-    <h2>🏆 Race Prediction</h2>
-    <div class="info info-b"><strong>Enter your best time</strong> for a 10K or Marathon to estimate your times for other distances.</div>
-    <div class="g2">
-      <div class="igroup">
-        <h3>Your 10 km time</h3>
-        <div class="irow">
-          <div><label>Minutes</label><input type="number" id="z10m" placeholder="40" oninput="cm();calcAll()"></div>
-          <div><label>Seconds</label><input type="number" id="z10s" placeholder="00" oninput="calcAll()"></div>
-        </div>
-      </div>
-      <div class="igroup">
-        <h3>Your Marathon time</h3>
-        <div class="irow">
-          <div><label>Hours</label><input type="number" id="zmh" placeholder="3" oninput="c10();calcAll()"></div>
-          <div><label>Minutes</label><input type="number" id="zmm" placeholder="30" oninput="calcAll()"></div>
-        </div>
-      </div>
-    </div>
-    <div id="predOut"></div>
-  </div>
+    ReactDOM.render(<BesserLaufen />, document.getElementById('root'));
+  </script>
 
-  <!-- PACES -->
-  <div id="panel-tempos" class="panel" style="display:none">
-    <h2>🎯 Training Paces</h2>
-    <div class="info info-i"><strong>Enter your time</strong> and choose your goal to get personalized paces.</div>
-    <div class="g2">
-      <div class="igroup">
-        <h3>Your 10 km time</h3>
-        <div class="irow">
-          <div><label>Minutes</label><input type="number" id="p10m" placeholder="40" oninput="cm2();calcAll()"></div>
-          <div><label>Seconds</label><input type="number" id="p10s" placeholder="00" oninput="calcAll()"></div>
-        </div>
-      </div>
-      <div class="igroup">
-        <h3>Your Marathon time</h3>
-        <div class="irow">
-          <div><label>Hours</label><input type="number" id="pmh" placeholder="3" oninput="c102();calcAll()"></div>
-          <div><label>Minutes</label><input type="number" id="pmm" placeholder="30" oninput="calcAll()"></div>
-        </div>
-      </div>
-    </div>
-    <label style="font-weight:600;color:#374151;margin-bottom:10px;display:block">What are you training for?</label>
-    <div class="pb">
-      <button id="g10" class="on" onclick="setGoal('10k')">10 km / Half Marathon</button>
-      <button id="gma" onclick="setGoal('marathon')">Marathon</button>
-    </div>
-    <div id="pacesOut"></div>
-  </div>
+  <script>
+    if ('serviceWorker' in navigator) {
+      navigator.serviceWorker.register('/service-worker.js')
+        .then(reg => {
+          setInterval(() => reg.update(), 2 * 60 * 1000);
+        });
 
-  <!-- TRAINING PLAN -->
-  <div id="panel-plan" class="panel" style="display:none">
-    <h2 style="font-size:1.1rem;white-space:nowrap">📋 Weekly Training Plan</h2>
-    <div id="planWarn" class="info info-y" style="display:none">⚠️ Enter your maximum HR in the <em>HR Zones</em> tab to see personalized pulse zones.</div>
-    <div class="pb">
-      <button id="pt10" class="on" onclick="setPT('10k')">10 km / Half Marathon<div class="sub">4 days per week</div></button>
-      <button id="ptma" onclick="setPT('marathon')">Marathon<div class="sub">5 days per week</div></button>
-    </div>
-    <h3>Your personal plan:</h3>
-    <div id="planOut"></div>
-  </div>
-
-  <!-- RECOMMENDATIONS -->
-  <div id="panel-reco" class="panel" style="display:none">
-    <h2 style="text-align:center;display:block">Considerations and Recommendations for Marathon Preparation</h2>
-    <div class="info info-i" style="font-style:italic;line-height:1.7;margin-top:14px">
-      Running a marathon means not only covering 42.195 km: it is a physiological, mental, and emotional transformation process. After more than 45 years of running, 28 marathons, and a personal best under 2:19 h, I learned that success comes from the precise combination of science, consistency, and passion.
-    </div>
-    <div class="reco-scrl" id="recoOut"></div>
-  </div>
-
-</div>
-<script>
-var sex='m', goal='10k', pt='10k';
-
-function showTab(id,btn){
-  ['hf','zeiten','tempos','plan','reco'].forEach(function(t){ document.getElementById('panel-'+t).style.display='none'; });
-  document.querySelectorAll('.tab').forEach(function(b){ b.classList.remove('active'); });
-  document.getElementById('panel-'+id).style.display='block';
-  btn.classList.add('active');
-  calcAll();
-}
-
-function setSex(s){
-  sex=s;
-  document.getElementById('bm').className=s==='m'?'m-on':'';
-  document.getElementById('bf').className=s==='f'?'f-on':'';
-  calcAge(); calcAll();
-}
-
-function calcAge(){
-  var a=parseInt(document.getElementById('age').value);
-  var el=document.getElementById('ageHint');
-  if(!a){el.innerHTML='';return;}
-  var est=sex==='m'?Math.round(211-0.64*a):Math.round(215-0.64*a);
-  var f=sex==='m'?'211 − 0.64×Age':'215 − 0.64×Age';
-  el.innerHTML='Estimated max HR ('+f+'): <strong>'+est+' bpm</strong>'
-    +'<button onclick="applyAge('+est+')">Apply</button>';
-}
-function applyAge(v){ document.getElementById('hfMax').value=v; calcAll(); }
-
-function cm()  { document.getElementById('zmh').value=''; document.getElementById('zmm').value=''; }
-function c10() { document.getElementById('z10m').value=''; document.getElementById('z10s').value=''; }
-function cm2() { document.getElementById('pmh').value=''; document.getElementById('pmm').value=''; }
-function c102(){ document.getElementById('p10m').value=''; document.getElementById('p10s').value=''; }
-
-function setGoal(g){
-  goal=g;
-  document.getElementById('g10').className=g==='10k'?'on':'';
-  document.getElementById('gma').className=g==='marathon'?'on':'';
-  calcAll();
-}
-function setPT(t){
-  pt=t;
-  document.getElementById('pt10').className=t==='10k'?'on':'';
-  document.getElementById('ptma').className=t==='marathon'?'on':'';
-  calcAll();
-}
-
-function toS(h,m,s){ return (h||0)*3600+(m||0)*60+(s||0); }
-function fmt(ts){
-  var h=Math.floor(ts/3600),m=Math.floor((ts%3600)/60),s=Math.round(ts%60);
-  return h>0?h+':'+pad(m)+':'+pad(s):m+':'+pad(s);
-}
-function mkm(spk){ var m=Math.floor(spk/60),s=Math.round(spk%60); return m+':'+pad(s); }
-function pad(n){ return n<10?'0'+n:''+n; }
-
-function pred(from,sec){
-  if(from==='10k') return {'10k':sec,'21k':Math.round(sec*2.182),'42k':Math.round(sec*4.7)};
-  return {'42k':sec,'21k':Math.round(sec/2.154),'10k':Math.round(sec/4.7)};
-}
-function lvl(p){
-  var h=p['42k']/3600;
-  if(h<2.433)return'elite'; if(h<3.083)return'advanced'; if(h<3.667)return'intermediate'; return'beginner';
-}
-var lrec={elite:{km:'120–160 km',days:'3–4 days'},advanced:{km:'90–120 km',days:'2–3 days'},
-          intermediate:{km:'60–90 km',days:'2 days'},beginner:{km:'60–80 km',days:'1–2 days'}};
-
-function calcAll(){ renderHF(); renderPred(); renderPaces(); renderPlan(); }
-
-function renderHF(){
-  var hf=parseInt(document.getElementById('hfMax').value);
-  var el=document.getElementById('hfOut'); if(!hf||hf<100||hf>220){el.innerHTML='';return;}
-  var zones=[
-    {l:'Recovery', p:'(<68%)',   v:'< '+Math.round(hf*.68)+' bpm',                          c:'green-c'},
-    {l:'Zone 1',   p:'(68–72%)', v:Math.round(hf*.68)+'–'+Math.round(hf*.72)+' bpm',        c:'blue-c'},
-    {l:'Zone 2',   p:'(77–79%)', v:Math.round(hf*.77)+'–'+Math.round(hf*.79)+' bpm',        c:'cyan-c'},
-    {l:'Zone 3',   p:'(80–84%)', v:Math.round(hf*.80)+'–'+Math.round(hf*.84)+' bpm',        c:'orange-c'},
-    {l:'Zone 4',   p:'(85–88%)', v:Math.round(hf*.85)+'–'+Math.round(hf*.88)+' bpm',        c:'red-c'},
-    {l:'Race Pace',p:'(89–92%)', v:Math.round(hf*.89)+'–'+Math.round(hf*.92)+' bpm',        c:'purple-c'}
-  ];
-  var h='<h3>Your training zones:</h3>';
-  zones.forEach(function(z){
-    h+='<div class="zone-card '+z.c+'"><div class="zone-title">'+z.l+' <span style="font-weight:400">'+z.p+'</span></div>'
-      +'<div class="zone-val">'+z.v+'</div></div>';
-  });
-  h+='<h3 style="margin-top:20px;margin-bottom:10px">Complete Heart Rate Table:</h3>'
-    +'<div class="hr-tbl"><div class="hr-head"><div>Intensity</div><div>Heart Rate</div></div><div class="hr-body">';
-  for(var p=65;p<=100;p++){
-    var f=Math.round(hf*(p/100));
-    h+='<div class="hr-row" style="'+(p%2===0?'background:#f9fafb':'')+'"><div style="color:#1d4ed8">'+p+' %</div><div style="color:#1e3a8a">'+f+'</div></div>';
-  }
-  h+='</div></div>';
-  el.innerHTML=h;
-}
-
-function renderPred(){
-  var el=document.getElementById('predOut');
-  var m10=parseInt(document.getElementById('z10m').value),s10=parseInt(document.getElementById('z10s').value)||0;
-  var mh=parseInt(document.getElementById('zmh').value)||0,mm=parseInt(document.getElementById('zmm').value)||0;
-  var pr=null;
-  if(m10) pr=pred('10k',toS(0,m10,s10));
-  else if(mh||mm) pr=pred('42k',toS(mh,mm,0));
-  if(!pr){el.innerHTML='';return;}
-  var ds=[{l:'10 Kilometers',k:'10k',d:10,c:'bg-gr'},{l:'Half Marathon',k:'21k',d:21.097,c:'bg-bl'},{l:'Marathon',k:'42k',d:42.195,c:'bg-pu'}];
-  var h='<div class="g3">';
-  ds.forEach(function(d){
-    h+='<div class="pred-card '+d.c+'"><div class="pt">'+d.l+'</div><div class="pv">'+fmt(pr[d.k])+'</div>'
-      +'<div class="pp">Pace: '+mkm(pr[d.k]/d.d)+' min/km</div></div>';
-  });
-  h+='</div>';
-  var lv=lvl(pr),rc=lrec[lv];
-  h+='<div class="nivel"><h3>📈 Recommendations – level: '+lv.charAt(0).toUpperCase()+lv.slice(1)+'</h3>'
-    +'<div class="nivel-g"><div class="nivel-item"><div class="lbl">Km per week</div><div class="val">'+rc.km+'</div></div>'
-    +'<div class="nivel-item"><div class="lbl">Quality days</div><div class="val">'+rc.days+'</div></div></div></div>';
-  el.innerHTML=h;
-}
-
-function renderPaces(){
-  var el=document.getElementById('pacesOut');
-  var m10=parseInt(document.getElementById('p10m').value),s10=parseInt(document.getElementById('p10s').value)||0;
-  var mh=parseInt(document.getElementById('pmh').value)||0,mm=parseInt(document.getElementById('pmm').value)||0;
-  var tm,t10;
-  if(m10){ var s=toS(0,m10,s10); var pr=pred('10k',s); tm=pr['42k']/42.195; t10=s/10; }
-  else if(mh||mm){ var sm=toS(mh,mm,0); var pr2=pred('42k',sm); tm=sm/42.195; t10=pr2['10k']/10; }
-  else{el.innerHTML='';return;}
-  var isM=(goal==='marathon');
-  var cards=[
-    {t:'Easy Run',       s:'Aerobic base – 70–80% of your training',c:'green-c',  v:mkm(tm+60)+' – '+mkm(tm+75)+' min/km'},
-    {t:'Race Pace',      s:'Run: '+(isM?'5–15 km':'5–6 km'),         c:'orange-c', v:mkm(isM?tm:t10)+' min/km'},
-    {t:'Tempo Run',      s:'Distance: '+(isM?'12–15 km':'8–12 km'),  c:'red-c',    v:mkm(isM?tm+15:t10+20)+' – '+mkm(isM?tm+20:t10+30)+' min/km'},
-    {t:'Long Run (Base)',s:'1:45–2:00 hrs. · Year-round',             c:'blue-c',   v:mkm(t10+90)+' – '+mkm(t10+105)+' min/km'},
-    {t:'Marathon Long Run',s:'2:15–3:00 hrs. · +10–15 min/week',     c:'indigo-c', v:mkm(tm+60)+' – '+mkm(tm+75)+' min/km'}
-  ];
-  var h='<h3>Your Training Paces:</h3>';
-  cards.forEach(function(c){
-    h+='<div class="pace-card '+c.c+'"><div class="pc-title">'+c.t+'</div>'
-      +'<div class="pc-sub">'+c.s+'</div><div class="pc-val">'+c.v+'</div></div>';
-  });
-  h+='<div class="tips"><h4 style="margin-bottom:10px">📋 Training Tips:</h4><ul>'
-    +'<li>• Most of your kilometers should be run at easy pace.</li>'
-    +'<li>• Plan 1–2 quality sessions per week.</li>'
-    +'<li>• Allow adequate recovery between hard sessions.</li>'
-    +'<li>• Increase volume gradually (10% rule).</li></ul></div>';
-  el.innerHTML=h;
-}
-
-function renderPlan(){
-  var hf=parseInt(document.getElementById('hfMax').value);
-  var ok=hf&&hf>=100&&hf<=220;
-  document.getElementById('planWarn').style.display=ok?'none':'block';
-  function pp(mn,mx){ return ok?mn+'–'+mx+' bpm':'—'; }
-  var z1n=ok?Math.round(hf*.70):null,z1x=ok?Math.round(hf*.73):null;
-  var z2=ok?Math.round(hf*.77):null;
-  var z3n=ok?Math.round(hf*.82):null,z3x=ok?Math.round(hf*.84):null;
-  var z4n=ok?Math.round(hf*.88):null,z4x=ok?Math.round(hf*.92):null;
-  var d10=[
-    {day:'Tuesday',  t:'Tempo Run', bg:'#3b82f6',bpm:pp(z3n,z3x),pct:'(82–84%)',dur:'40–50 min.'},
-    {day:'Thursday', t:'Easy Run',  bg:'#22c55e',bpm:pp(z1n,z1x),pct:'(70–73%)',dur:'40–60 min.'},
-    {day:'Saturday', t:'Race Pace', bg:'#ef4444',bpm:pp(z4n,z4x),pct:'(88–92%)',dur:'30–40 min.'},
-    {day:'Sunday',   t:'Long Run',  bg:'#16a34a',bpm:pp(z1n,z1x),pct:'(70–73%)',dur:'1:30–2:00 h.'}
-  ];
-  var dma=[
-    {day:'Tuesday',   t:'Tempo Run', bg:'#3b82f6',bpm:pp(z3n,z3x),pct:'(82–84%)',dur:'50–60 min.'},
-    {day:'Wednesday', t:'Easy Run',  bg:'#eab308',bpm:pp(z1n,z1x),pct:'(70–73%)',dur:'1:30–1:40 h.'},
-    {day:'Thursday',  t:'Easy Run',  bg:'#22c55e',bpm:z2?z2+' bpm':'—',pct:'(77%)',dur:'45–60 min.'},
-    {day:'Saturday',  t:'Race Pace', bg:'#ef4444',bpm:pp(z4n,z4x),pct:'(88–92%)',dur:'40–50 min.'},
-    {day:'Sunday',    t:'Long Run',  bg:'#16a34a',bpm:pp(z1n,z1x),pct:'(70–73%)',dur:'2:15–3:00 h.'}
-  ];
-  var active=pt==='10k'?d10:dma, h='';
-  active.forEach(function(d){
-    h+='<div class="day-card" style="background:'+d.bg+'">'
-      +'<div class="day-day">'+d.day+'</div><div class="day-title">'+d.t+'</div>'
-      +'<div class="day-bpm">'+d.bpm+'&nbsp;&nbsp;<span style="font-size:.82rem">'+d.pct+'</span></div>'
-      +'<div class="day-dur">'+d.dur+'</div></div>';
-  });
-  document.getElementById('planOut').innerHTML=h;
-}
-
-(function buildReco(){
-  var data=[
-    {n:1,t:'The Decision: Why a Marathon?',
-     txt:'The marathon is a serious decision that requires running maturity. Before attempting one, have at least two years of regular running and experience in 10 km and half marathon races. Preparing for the marathon will change your daily life. It is not a sacrifice — it is a dream fulfilled that will help you grow as a runner and as a person.'},
-    {n:2,t:'Health: The Foundation of Performance',
-     txt:'Before starting preparation, undergo a medical examination. A blood test, electrocardiogram, and stress test are recommended. Health is non-negotiable: without it, there is no performance, no enjoyment, and no marathon.'},
-    {n:3,t:'Planning: Weeks and Structure',
-     txt:'Eight to 11 weeks of specific training provide a solid foundation for a marathon. The key lies in progression: gradually increasing volume and intensity while adhering to the principles of training, recovery, and adaptation.'},
-    {n:4,t:'Training Environment: Place and Community',
-     txt:'Train on familiar routes near your home. Train with company whenever possible: the group provides support on difficult days and multiplies motivation. The marathon is run alone, but better prepared as a team.'},
-    {n:5,t:'Realistic Goal: Much More Than a Time',
-     txt:'In your first marathon, the main goal is to finish. The time comes as a result of good work. Crossing the finish line for the first time is an emotional experience hard to describe: tears, pride, inner stillness, and the deep certainty of having given everything.'},
-    {n:6,t:'Training Methodology',
-     txt:'Combine three pillars: aerobic volume (easy and long runs) to build the physiological base; marathon pace to optimize running economy; and quality work (fartlek, tempo runs, strides, hills) to improve VO₂max and the aerobic threshold.'},
-    {n:7,t:'Paces and Weekly Volume',
-     txt:'Amateur runners should run between 60 and 70 km per week. Paces should be predominantly aerobic (Zone 2–3). Training slowly is not a waste of time — it is an investment in the future.'},
-    {n:8,t:'Intensity Control: Heart Rate Monitor and Body Awareness',
-     txt:'Knowing your maximum heart rate and aerobic threshold allows for precise training. Technology is helpful, but listen to your body: fatigue, recovery, and mood are also important indicators.'},
-    {n:9,t:'Long Runs',
-     txt:'Long runs are a crucial pillar of marathon training. Sunday morning is ideal. These runs accustom the muscles to working for a long time, teach the metabolism to use fewer carbohydrates, and train mental strength.'},
-    {n:10,t:'Time or Kilometers?',
-     txt:'For popular runners it is better to plan training by time rather than kilometers. Otherwise, you will not achieve the recovery necessary for the following sessions — which is just as important as the effort itself.'},
-    {n:11,t:'Metabolic Adaptation: Fasted Training',
-     txt:'Doing the long run in a fasted state — at 70–72% of maximum HR — improves fat burning and spares glycogen stores. This is key to avoiding the dreaded "wall at km 30".'},
-    {n:12,t:'Recovery: Rebuilding for Further Growth',
-     txt:'Without recovery, there is no adaptation. After the long run, replenish with carbohydrates and quality proteins: oats, ripe fruit, boiled potatoes, whole grain rice.'},
-    {n:13,t:'Mindful Nutrition',
-     txt:'A diet based on real foods — vegetables, fruit, legumes, whole grains, and unrefined oils — is the best natural support. Reduce industrial sugar for more energy and emotional stability.'},
-    {n:14,t:'Meals and Metabolic Efficiency',
-     txt:'2–3 meals per day promote metabolic flexibility, improve fat burning, and give the digestive system a rest. A well-rested digestive system provides more energy for training and recovery.'},
-    {n:15,t:'Race Pace: Building Confidence',
-     txt:'Train at marathon pace once a week. Start with 5 km and build up to 12–15 km. You are not only training your body — you are also training the certainty that you can hold that pace when it matters.'},
-    {n:16,t:'Races as Physiological and Emotional Tests',
-     txt:'Running 10–15 km at marathon pace or a half marathon four weeks before the marathon is an excellent test. It serves to check fitness, test gear, and confirm that the dream is within reach.'},
-    {n:17,t:'Method: Effective Simplicity',
-     txt:'Running 70–80 minutes 2–3 times a week, at a pace 20–25 seconds slower than marathon pace, builds solid endurance. This training is challenging and extremely effective.'},
-    {n:18,t:'Shoes: Confidence Under Your Feet',
-     txt:'Shoes should be an extension of your body. Never wear them for the first time on race day. Use them throughout preparation: confidence also needs to be trained.'},
-    {n:19,t:'Race Day: Science and Emotion',
-     txt:'Breakfast three hours before the start: chamomile tea, a roll with butter and honey, and a ripe banana. A short easy warm-up prepares your muscles. Then, at the starting line — every kilometer run, every doubt overcome, every early morning — none of it was in vain. The marathon is run with your legs, your mind… and your heart.'}
-  ];
-  var h='';
-  data.forEach(function(r){
-    h+='<div class="reco-card"><div class="reco-n">'+r.n+'.</div>'
-      +'<div class="reco-t">'+r.t+'</div>'
-      +'<div class="reco-txt">'+r.txt+'</div></div>';
-  });
-  h+='<div class="epilogue"><h3>Epilogue</h3>'
-    +'<p>These reflections come from a life dedicated to running and the privilege of sharing experiences with great athletes like Andrés Espinosa and Julio Rey. From them I learned that the marathon is a physiological and emotional work of art: precision, humility, and passion.</p>'
-    +'<p style="margin-top:10px;font-weight:600">If these lines accompany you in your preparation, the goal has already been achieved.</p>'
-    +'<div class="auth">Manolo</div></div>';
-  document.getElementById('recoOut').innerHTML=h;
-})();
-
-calcAll();
-</script>
+      navigator.serviceWorker.addEventListener('message', event => {
+        if (event.data?.type === 'SW_UPDATED') {
+          window.location.reload();
+        }
+      });
+    }
+  </script>
 </body>
 </html>
